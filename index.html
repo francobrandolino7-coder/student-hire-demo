@@ -18,36 +18,54 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 @media(max-width:620px){.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.appTable{display:block;overflow:auto}}
 
 .authbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.authbar input{min-width:220px;background:#081526;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px}.locked{padding:22px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);text-align:center}.source{font-size:11px;color:var(--muted);margin-top:8px}.job a.apply{display:inline-block;margin-top:10px}
+
+:root{--bg:#f7f9fc;--panel:#ffffff;--panel2:#f2f5f9;--text:#142033;--muted:#65758b;--line:#dfe6ef;--green:#0f9f79;--blue:#3366ff;--yellow:#a56b00}
+body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)}
+.nav{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-shadow:0 1px 10px rgba(20,32,51,.04)}
+.card{background:#fff;border-color:var(--line);box-shadow:0 8px 28px rgba(20,32,51,.06)}
+.hero{background:radial-gradient(circle at 75% 0,rgba(51,102,255,.08),transparent 35%)}
+.logo{background:none;width:auto;height:auto;color:inherit;border-radius:0}
+.btn2{background:#fff;color:var(--text);border:1px solid var(--line)}
+.btn2.primary,.cta{background:#17324d;color:#fff;border:1px solid #17324d}
+.btn2.primary:hover,.cta:hover{background:#0f263a}
+.pill{background:#f7f9fc;color:#415269;border-color:#e0e7f0}
+.score{background:#eefaf6;color:#08795c;border-color:#c6eee2}
+.field input,.field textarea,.field select,.authbar input,.appTable select{background:#fff;color:var(--text);border-color:var(--line)}
+.aiBox{background:#f8fafc;color:#26364b}
+.bar{background:#e9eef5}.fill{background:linear-gradient(90deg,#3366ff,#0f9f79)}
+.brandmark{display:flex;align-items:center;gap:10px}.brandmark svg{width:36px;height:36px;flex:0 0 auto}
+.brandword{font-weight:900;letter-spacing:-.03em}.brandword span{color:#3366ff}
+.agentBadge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#0d6b55;background:#e9f8f3;border:1px solid #c7eadf;border-radius:999px;padding:5px 8px}
+.modalBack{position:fixed;inset:0;background:rgba(20,32,51,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modalBack.open{display:flex}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 30px 80px rgba(20,32,51,.22);padding:22px}.modal h3{margin:0 0 6px}.checkrow{display:flex;gap:10px;align-items:flex-start;margin:14px 0}.packet{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px;white-space:pre-wrap;font-size:13px;line-height:1.55}.statusbox{margin-top:12px;padding:12px;border-radius:10px;background:#fff7e6;border:1px solid #f0d7a3;color:#73510a}
 </style>
 </head>
 <body>
-<header class="nav"><div class="wrap navin"><div class="brand"><div class="logo">SH</div>Student Hire <span class="beta">Beta</span></div><nav class="links"><a href="#profile">Get Started</a><a href="#matches">Matches</a><a href="#ai">AI Coach</a><a href="#applications">Applications</a><a href="#why">Why Student Hire</a><a href="#feedback">Feedback</a></nav></div></header>
+<header class="nav"><div class="wrap navin"><div class="brand"><div class="brandmark">
+<svg viewBox="0 0 48 48" aria-label="Student Hire logo" role="img"><rect x="3" y="3" width="42" height="42" rx="12" fill="#17324d"/><path d="M13 17.5 24 12l11 5.5L24 23l-11-5.5Z" fill="#fff"/><path d="M17 22v7c0 4 3.1 7 7 7s7-3 7-7v-7l-7 3.5L17 22Z" fill="#65d6b1"/><path d="M35 18v9" stroke="#65d6b1" stroke-width="2.4" stroke-linecap="round"/><circle cx="35" cy="29.5" r="2" fill="#65d6b1"/></svg>
+<div class="brandword">Student <span>Hire</span></div></div><span class="beta">Beta</span></div><nav class="links"><a href="#profile">Get Started</a><a href="#matches">Matches</a><a href="#ai">AI Coach</a><a href="#applications">Applications</a><a href="#why">Why Student Hire</a><a href="#feedback">Feedback</a></nav></div></header>
 <main>
 <section class="hero"><div class="wrap"><div class="eyebrow">Student-first job matching</div><h1>Jobs that fit your <span class="grad">student life.</span></h1><p class="lead">Start with your resume, then tell Student Hire who you are, where you want to go, what you want to achieve next, and what you need financially. Your matches are built from your real goals and constraints.</p><a class="cta" href="#profile">Build your profile</a><div class="grid3"><div class="card"><strong>Schedule-aware</strong><p>Class times, availability and exams directly affect fit.</p></div><div class="card"><strong>Explainable scores</strong><p>Students can see what helped or hurt every recommendation.</p></div><div class="card"><strong>High-signal alerts</strong><p>Only jobs above a chosen threshold should trigger notifications.</p></div></div></div></section>
 
-<section class="section" id="matches"><div class="wrap"><h2>Your live job matches</h2>
-<p class="sub" id="matchIntro">Complete your profile and create a Student Hire account to unlock current job listings.</p>
+<section class="section" id="matches"><div class="wrap"><div class="row" style="align-items:center;justify-content:space-between"><div><h2>Your live job matches</h2><p class="sub" id="matchIntro">Complete your profile and create a Student Hire account to unlock current job listings.</p></div><span class="agentBadge">● Agent-assisted applications</span></div>
 <div id="authGate" class="locked">Your personalized live listings will appear here after you create or sign in to your Student Hire account.</div>
 <div id="jobsContent" style="display:none">
 <div class="matchgrid"><div class="jobs">
-<div class="card job"><div class="top"><div><h3>Marketing Assistant — Internship</h3><div class="small">Laserglow Technologies · North York, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$20/hr</span><span class="pill">Internship</span><span class="pill">On site</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3712067 · posted Nov 4, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?fss=1&mid=22437&page=1&sort=M">View & apply</a></div>
+<div class="card job"><div class="top"><div><h3>Intern — Product Marketing, Winter 2027</h3><div class="small">EQ Bank · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">Student</span><span class="pill">Hybrid</span><span class="pill">Jan–Apr 2027</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Verified Nov 12, 2026 · employer posting</div><div class="controls"><button class="btn2 primary" onclick="openApplyAgent(1)">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="https://jobs.lever.co/eqbank/d2a1c83a-dc7a-4b4f-a159-98b21e6e0616">Source listing</a></div></div>
 
-<div class="card job"><div class="top"><div><h3>Sales Associate — Retail</h3><div class="small">Roots · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95–$26/hr</span><span class="pill">Retail</span><span class="pill">CareerBeacon</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">CareerBeacon #4056426 · posted Nov 11, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://on.jobbank.gc.ca/jobsearch/jobsearch?d=10&fn21=64100&mid=22437&sort=D%23results-list-content">View & apply</a></div>
+<div class="card job"><div class="top"><div><h3>Marketing Assistant — Internship</h3><div class="small">Laserglow Technologies · North York, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$20/hr</span><span class="pill">Internship</span><span class="pill">On site</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3712067 · posted Nov 4, 2026</div><div class="controls"><button class="btn2 primary" onclick="openApplyAgent(2)">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?d=50&fn21=11202&mid=22437&page=1&sort=M">Source listing</a></div></div>
 
-<div class="card job"><div class="top"><div><h3>Customer Service Representative — Call Centre</h3><div class="small">LCBO · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$20.82/hr</span><span class="pill">Customer service</span><span class="pill">CareerBeacon</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">CareerBeacon #3906270 · posted Nov 6, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.cb.guichetemplois.gc.ca/jobsearch/jobsearch?empl=LCBO&page=1&sort=D">View & apply</a></div>
+<div class="card job"><div class="top"><div><h3>Retail Salesperson</h3><div class="small">Silvana Family Clothing Department Store Inc. · North York, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95–$23/hr</span><span class="pill">Retail</span><span class="pill">Direct Apply</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3714961 · posted Nov 8, 2026</div><div class="controls"><button class="btn2 primary" onclick="openApplyAgent(3)">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?lang=eng&pcode=6300362&source=jb">Source listing</a></div></div>
 
-<div class="card job"><div class="top"><div><h3>Client Service Clerk</h3><div class="small">BMO Financial · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95–$31/hr</span><span class="pill">Client service</span><span class="pill">CareerBeacon</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">CareerBeacon #4014492 · posted Nov 1, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?empl=BMO+Financial&page=1&sort=D">View & apply</a></div>
+<div class="card job"><div class="top"><div><h3>Sales Associate — Retail</h3><div class="small">Roots · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95–$26/hr</span><span class="pill">Retail</span><span class="pill">Toronto</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">CareerBeacon via Job Bank · posted Nov 11, 2026</div><div class="controls"><button class="btn2 primary" onclick="openApplyAgent(4)">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="https://on.jobbank.gc.ca/jobsearch/jobsearch?d=10&fn21=64100&mid=22437&sort=D%23results-list-content">Source listing</a></div></div>
 
-<div class="card job"><div class="top"><div><h3>Sales Associate</h3><div class="small">Chow Tai Fook · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$18–$25/hr</span><span class="pill">On site</span><span class="pill">Direct Apply</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3709343 · posted Oct 31, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?fn21=64100&mid=22437">View & apply</a></div>
-
-<div class="card job"><div class="top"><div><h3>Retail Sales Associate</h3><div class="small">EB Games Canada · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95/hr</span><span class="pill">On site</span><span class="pill">Retail</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3704376 · posted Oct 26, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring=EB+Games+online+store">View & apply</a></div>
+<div class="card job"><div class="top"><div><h3>Sales Associate</h3><div class="small">Chow Tai Fook · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$18–$25/hr</span><span class="pill">On site</span><span class="pill">Direct Apply</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3709343 · posted Oct 31, 2026</div><div class="controls"><button class="btn2 primary" onclick="openApplyAgent(5)">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?mid=22437&page=1&sort=P">Source listing</a></div></div>
 </div>
 <aside class="card side" id="fitPanel"><div class="tag">FIT BREAKDOWN</div><h3>Personalized match</h3><div class="score" id="sideScore" style="margin:10px 0 16px">—</div><p class="small" id="sideSummary">Your profile and account unlock personalized fit scores for current listings.</p>
 <div class="factor"><div class="row"><span>Resume & skills</span><span id="fSkills">—</span></div><div class="bar"><div class="fill" id="bSkills" style="width:0%"></div></div></div>
 <div class="factor"><div class="row"><span>Career direction</span><span id="fCareer">—</span></div><div class="bar"><div class="fill" id="bCareer" style="width:0%"></div></div></div>
 <div class="factor"><div class="row"><span>Schedule & hours</span><span id="fSchedule">—</span></div><div class="bar"><div class="fill" id="bSchedule" style="width:0%"></div></div></div>
 <div class="factor"><div class="row"><span>Financial fit</span><span id="fFinancial">—</span></div><div class="bar"><div class="fill" id="bFinancial" style="width:0%"></div></div></div>
-<p class="small">Listings are current public postings and can expire. Always verify details on the employer/source page.</p></aside>
+<p class="small">Current public listings can expire. Student Hire checks source details before any agent submission.</p></aside>
 </div></div></div></section>
 
 <section class="section" id="profile"><div class="wrap">
@@ -115,17 +133,24 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 
 <section class="section" id="feedback"><div class="wrap"><div class="card"><h2>Tester feedback</h2><p>Tell us what broke, what confused you, or why a match felt wrong. This feedback should drive the weekly beta fixes.</p><div class="field"><label>Your feedback</label><textarea id="fbText" placeholder="Example: This job scored 90% but conflicts with my Tuesday lecture."></textarea></div><div class="controls"><button class="btn2 primary" onclick="sendFeedback()">Prepare feedback email</button><span id="fbMsg" class="success"></span></div></div></div></section>
 </main>
+<div class="modalBack" id="applyModal"><div class="modal">
+<div class="row" style="align-items:center"><div><div class="eyebrow">Student Hire Agent</div><h3 id="applyTitle">Application review</h3></div><button class="btn2" onclick="closeApplyAgent()">Close</button></div>
+<p class="small">The agent prepares and autofills the application. Nothing should be submitted until you approve the exact packet below.</p>
+<div class="packet" id="applyPacket"></div>
+<div class="checkrow"><input id="applyConsent" type="checkbox"><label for="applyConsent">I reviewed this application packet and authorize Student Hire Agent to submit this application to the employer for this specific role.</label></div>
+<div class="controls"><button class="btn2 primary" onclick="approveAgentApplication()">Approve & start agent</button><a id="applySource" class="btn2" target="_blank" rel="noopener">Open source listing</a></div>
+<div class="statusbox" id="applyStatus">Agent submission is staged but not yet connected to the production browser-agent API. Your approval request will be saved to your account so the backend can process it once the TinyFish key is connected.</div>
+</div></div>
 <footer class="footer"><div class="wrap">Student Hire beta · Jobs that fit your student life.</div></footer>
 
 <script>
 (function(){
   const jobs=[
-    {id:1,title:"Marketing Assistant — Internship",company:"Laserglow Technologies",pay:20,hours:null,base:70,keywords:["marketing","social media","communication","design"]},
-    {id:2,title:"Sales Associate — Retail",company:"Roots",pay:17.95,hours:null,base:65,keywords:["retail","customer service","sales","communication"]},
-    {id:3,title:"Customer Service Representative — Call Centre",company:"LCBO",pay:20.82,hours:null,base:68,keywords:["customer service","communication","service"]},
-    {id:4,title:"Client Service Clerk",company:"BMO Financial",pay:17.95,hours:null,base:69,keywords:["finance","client service","customer service","communication"]},
-    {id:5,title:"Sales Associate",company:"Chow Tai Fook",pay:18,hours:null,base:65,keywords:["sales","retail","customer service","communication"]},
-    {id:6,title:"Retail Sales Associate",company:"EB Games Canada",pay:17.95,hours:null,base:64,keywords:["retail","sales","customer service","gaming"]}
+    {id:1,title:"Intern — Product Marketing, Winter 2027",company:"EQ Bank",pay:0,hours:null,base:72,keywords:["marketing","product","finance","communication"],sourceUrl:"https://jobs.lever.co/eqbank/d2a1c83a-dc7a-4b4f-a159-98b21e6e0616"},
+    {id:2,title:"Marketing Assistant — Internship",company:"Laserglow Technologies",pay:20,hours:null,base:70,keywords:["marketing","social media","communication","design"],sourceUrl:"https://www.jobbank.gc.ca/jobsearch/jobsearch?d=50&fn21=11202&mid=22437&page=1&sort=M"},
+    {id:3,title:"Retail Salesperson",company:"Silvana Family Clothing Department Store Inc.",pay:17.95,hours:null,base:65,keywords:["retail","customer service","sales","communication"],sourceUrl:"https://www.jobbank.gc.ca/jobsearch/jobsearch?lang=eng&pcode=6300362&source=jb"},
+    {id:4,title:"Sales Associate — Retail",company:"Roots",pay:17.95,hours:null,base:65,keywords:["retail","customer service","sales","communication"],sourceUrl:"https://on.jobbank.gc.ca/jobsearch/jobsearch?d=10&fn21=64100&mid=22437&sort=D%23results-list-content"},
+    {id:5,title:"Sales Associate",company:"Chow Tai Fook",pay:18,hours:null,base:65,keywords:["sales","retail","customer service","communication"],sourceUrl:"https://www.jobbank.gc.ca/jobsearch/jobsearch?mid=22437&page=1&sort=P"}
   ];
   const scoreEls=[...document.querySelectorAll(".job .score")];
   const jobCards=[...document.querySelectorAll(".job")];
@@ -154,7 +179,7 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
     const minPay=Number(profile.pay||0);
     const maxHours=Number(profile.maxHours||0);
     const minHours=Number(profile.minHours||0);
-    if(j.pay>=minPay) s+=10; else s-=Math.min(15,(minPay-j.pay)*4);
+    if(!j.pay){s+=3;} else if(j.pay>=minPay) s+=10; else s-=Math.min(15,(minPay-j.pay)*4);
     if(j.hours===null){s+=3;} else if(j.hours<=maxHours && j.hours>=Math.max(0,minHours-3)) s+=10; else s-=8;
     if(normalize(profile.availability).includes("weekend") && (j.id===1||j.id===2||j.id===4)) s+=4;
     return Math.max(55,Math.min(98,Math.round(s)));
@@ -314,6 +339,51 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
     if(msg)msg.textContent="Opening your email app with the feedback filled in.";
   };
 
+  let pendingAgentJob=null;
+  window.openApplyAgent=function(id){
+    if(!window.studentHireUser){document.getElementById("account")?.scrollIntoView({behavior:"smooth"});return}
+    if(!isProfileComplete()){document.getElementById("profile")?.scrollIntoView({behavior:"smooth"});return}
+    const j=jobs.find(x=>x.id===id); if(!j)return; pendingAgentJob=j;
+    const modal=document.getElementById("applyModal"), title=document.getElementById("applyTitle"), packet=document.getElementById("applyPacket"), src=document.getElementById("applySource"), status=document.getElementById("applyStatus");
+    if(title)title.textContent="Review application — "+j.title;
+    const p=profile;
+    const fit=j.score===null?"Not scored":j.score+"%";
+    const lines=[
+      "Role: "+j.title,
+      "Employer: "+j.company,
+      "Current fit: "+fit,
+      "",
+      "Candidate: "+(p.name||""),
+      "School / program: "+[p.school,p.program].filter(Boolean).join(" — "),
+      "Location: "+(p.location||""),
+      "Resume on profile: "+(p.resumeName||""),
+      "Skills: "+(p.skills||""),
+      "About: "+(p.about||""),
+      "Long-term direction: "+(p.future||""),
+      "Short-term goals: "+(p.shortGoals||""),
+      "Availability: "+(p.availability||""),
+      "Minimum pay target: $"+(p.pay||0)+"/hr",
+      "Monthly income goal: $"+(p.monthlyGoal||0),
+      "",
+      "Agent rule: do not invent experience, credentials, salary history, work authorization, demographic information, or answers the student has not provided."
+    ];
+    if(packet)packet.textContent=lines.join("\n"); if(src)src.href=j.sourceUrl;
+    if(status)status.textContent="Review everything above. The production agent will stop and ask you if an employer requires an answer that is not already in your profile.";
+    const consent=document.getElementById("applyConsent"); if(consent)consent.checked=false;
+    modal?.classList.add("open");
+  };
+  window.closeApplyAgent=function(){document.getElementById("applyModal")?.classList.remove("open");pendingAgentJob=null};
+  window.approveAgentApplication=async function(){
+    const status=document.getElementById("applyStatus"), consent=document.getElementById("applyConsent");
+    if(!pendingAgentJob)return; if(!consent?.checked){if(status)status.textContent="Review the packet and check the authorization box before starting the agent.";return}
+    const request={jobId:pendingAgentJob.id,title:pendingAgentJob.title,company:pendingAgentJob.company,sourceUrl:pendingAgentJob.sourceUrl,status:"approved_for_agent",approvedAt:new Date().toISOString()};
+    let q=[];try{q=JSON.parse(localStorage.getItem("studentHireAgentQueue")||"[]")}catch(e){}
+    q=q.filter(x=>x.jobId!==request.jobId);q.push(request);localStorage.setItem("studentHireAgentQueue",JSON.stringify(q));
+    if(window.studentHireSupabase){
+      try{const {data:{user}}=await window.studentHireSupabase.auth.getUser();if(user){const existing=user.user_metadata?.student_hire_agent_queue||[];const next=existing.filter(x=>x.jobId!==request.jobId);next.push(request);await window.studentHireSupabase.auth.updateUser({data:{student_hire_agent_queue:next}})}}catch(e){}
+    }
+    if(status)status.textContent="Approved and queued. The review/consent step is working. Live browser submission will activate when the server-side TinyFish Agent API key is connected.";
+  };
   recalc();
   renderTracker();
 })();
