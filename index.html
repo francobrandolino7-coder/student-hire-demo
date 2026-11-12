@@ -13,10 +13,13 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tools{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.tool{padding:16px}.tool strong{display:block;margin-bottom:5px}.ops{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric b{font-size:28px;display:block;margin-top:6px}.footer{border-top:1px solid var(--line);padding:30px 0 46px;color:var(--muted);font-size:13px}.tag{font-size:11px;color:var(--muted)}
 @media(max-width:900px){.matchgrid,.two{grid-template-columns:1fr}.grid3,.ops{grid-template-columns:1fr 1fr}.side{position:static}.links{display:none}}
 @media(max-width:620px){.grid3,.ops,.tools{grid-template-columns:1fr}.hero{padding-top:50px}.lead{font-size:16px}}
+
+.btn2{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 12px;border-radius:10px;font-weight:800;cursor:pointer}.btn2.primary{background:linear-gradient(100deg,var(--green),var(--blue));color:#051828;border:0}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:5px}.field label{font-size:12px;color:var(--muted);font-weight:800}.field input,.field textarea,.field select{width:100%;background:#081526;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px}.field textarea{min-height:90px}.full{grid-column:1/-1}.appTable{width:100%;border-collapse:collapse}.appTable th,.appTable td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.appTable select{background:#081526;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px}.aiBox{white-space:pre-wrap;background:#081526;border:1px solid var(--line);padding:14px;border-radius:12px;min-height:170px;color:#d8e2ed;line-height:1.55}.success{color:var(--green);font-size:13px}.empty{padding:20px;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
+@media(max-width:620px){.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.appTable{display:block;overflow:auto}}
 </style>
 </head>
 <body>
-<header class="nav"><div class="wrap navin"><div class="brand"><div class="logo">SH</div>Student Hire <span class="beta">Beta</span></div><nav class="links"><a href="#matches">Matches</a><a href="#profile">Profile</a><a href="#ai">AI Coach</a><a href="#why">Why Student Hire</a><a href="#feedback">Feedback</a></nav></div></header>
+<header class="nav"><div class="wrap navin"><div class="brand"><div class="logo">SH</div>Student Hire <span class="beta">Beta</span></div><nav class="links"><a href="#matches">Matches</a><a href="#profile">Profile</a><a href="#ai">AI Coach</a><a href="#applications">Applications</a><a href="#why">Why Student Hire</a><a href="#feedback">Feedback</a></nav></div></header>
 <main>
 <section class="hero"><div class="wrap"><div class="eyebrow">Student-first job matching</div><h1>Jobs that fit your <span class="grad">student life.</span></h1><p class="lead">Student Hire scores jobs against the things generic job boards often ignore: class schedules, commute, weekly hours, exam periods, pay expectations, skills, career direction and student-friendly flexibility.</p><a class="cta" href="#matches">See the product demo</a><div class="grid3"><div class="card"><strong>Schedule-aware</strong><p>Class times, availability and exams directly affect fit.</p></div><div class="card"><strong>Explainable scores</strong><p>Students can see what helped or hurt every recommendation.</p></div><div class="card"><strong>High-signal alerts</strong><p>Only jobs above a chosen threshold should trigger notifications.</p></div></div></div></section>
 
@@ -34,15 +37,144 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 <div class="factor"><div class="row"><span>Hours</span><span>100%</span></div><div class="bar"><div class="fill" style="width:100%"></div></div></div>
 <p class="small">Ranking uses job-relevant preferences and qualifications only. Protected traits are not used.</p></aside></div></div></section>
 
-<section class="section" id="profile"><div class="wrap"><h2>Student profile</h2><p class="sub">The matching engine is built around student constraints, not just keywords.</p><div class="two"><div class="card"><strong>Example profile</strong><p>Toronto Metropolitan University · Business Management · evenings and weekends available · max 40-minute commute · 8–20 hrs/week · minimum $18/hr.</p><div class="meta"><span class="pill">Excel</span><span class="pill">Communication</span><span class="pill">Customer service</span><span class="pill">Social media</span></div></div><div class="card"><strong>Alert settings</strong><p>Default high-fit threshold: <b style="color:var(--green)">85%</b>. Students can choose instant alerts or a daily digest. Exam blackout periods and class schedules can suppress bad matches.</p></div></div></div></section>
+<section class="section" id="profile"><div class="wrap"><h2>Build your student profile</h2><p class="sub">Guest beta: your profile is saved on this device and immediately changes your match scores.</p><div class="card"><div class="formgrid">
+<div class="field"><label>Name</label><input id="pName" placeholder="Your name"></div>
+<div class="field"><label>School</label><input id="pSchool" value="Toronto Metropolitan University"></div>
+<div class="field"><label>Program</label><input id="pProgram" value="Business Management"></div>
+<div class="field"><label>Location</label><input id="pLocation" value="Toronto, ON"></div>
+<div class="field"><label>Min weekly hours</label><input id="pMinHours" type="number" value="8"></div>
+<div class="field"><label>Max weekly hours</label><input id="pMaxHours" type="number" value="20"></div>
+<div class="field"><label>Minimum hourly pay</label><input id="pPay" type="number" value="18"></div>
+<div class="field"><label>Alert threshold</label><input id="pThreshold" type="number" min="60" max="100" value="85"></div>
+<div class="field full"><label>Skills</label><input id="pSkills" value="Excel, Communication, Customer service, Social media"></div>
+<div class="field full"><label>Career interests</label><input id="pInterests" value="Marketing, Social media, Retail, Operations"></div>
+<div class="field full"><label>Availability / class schedule</label><textarea id="pAvailability">Weekdays after 4 PM and weekends</textarea></div>
+<div class="field full"><label>Exam blackout periods</label><input id="pExams" placeholder="e.g. Dec 8–20, Apr 10–25"></div>
+</div><div class="controls"><button class="btn2 primary" onclick="saveProfile()">Save profile & recalculate matches</button><span id="profileMsg" class="success"></span></div></div></div></section>
 
-<section class="section" id="ai"><div class="wrap"><h2>AI Career Copilot</h2><p class="sub">The AI layer helps students act on good matches without inventing experience.</p><div class="tools"><div class="card tool"><strong>Resume Review</strong><p>Find weak bullets, missing evidence and student-relevant improvements.</p></div><div class="card tool"><strong>Should I Apply?</strong><p>Explain whether the role is worth the student's time and why.</p></div><div class="card tool"><strong>Interview Prep</strong><p>Generate role-specific questions and preparation themes.</p></div><div class="card tool"><strong>Skill-Gap Plan</strong><p>Turn missing skills into a short learning plan before applying.</p></div><div class="card tool"><strong>Cover Letter & Answers</strong><p>Draft tailored application material grounded in the student's profile.</p></div><div class="card tool"><strong>Study/Work Compatibility</strong><p>Flag workload or schedule risks before the student commits.</p></div></div></div></section>
+<section class="section" id="ai"><div class="wrap"><h2>AI Career Copilot</h2><p class="sub">This beta uses deterministic demo coaching. A live AI model can plug into the same workflow server-side later.</p><div class="two"><div class="card"><div class="field"><label>Selected job</label><input id="aiJob" value="Social Media Assistant"></div><div class="field" style="margin-top:10px"><label>Tool</label><select id="aiTool"><option>Should I Apply?</option><option>Resume Review</option><option>Interview Prep</option><option>Tailored Cover Letter</option><option>Skill-Gap Plan</option><option>Application Answers</option><option>Networking Message</option><option>Study/Work Compatibility</option><option>Scam/Risk Check</option></select></div><div class="controls"><button class="btn2 primary" onclick="runAI()">Run career tool</button></div></div><div class="card"><div id="aiOutput" class="aiBox">Choose a tool and run it for the selected job.</div><p class="small">The assistant should never invent experience, credentials, employer facts or skills you do not have.</p></div></div></div></section>
+
+<section class="section" id="applications"><div class="wrap"><h2>Application tracker</h2><p class="sub">Save jobs from Matches, then move them through your pipeline.</p><div class="card"><div id="appTracker"></div></div></div></section>
 
 <section class="section" id="why"><div class="wrap"><h2>Why Student Hire</h2><p class="sub">The wedge is better fit, not simply more listings.</p><div class="grid3"><div class="card"><strong>The problem</strong><p>Students waste time on roles that clash with class schedules, commute limits, weekly hours or exam periods.</p></div><div class="card"><strong>The solution</strong><p>Student Hire combines student-specific constraints with transparent scoring and an AI action layer.</p></div><div class="card"><strong>Business model</strong><p>Students stay free. Employers can pay for postings, featured placement and premium recruiting tools later.</p></div></div></div></section>
 
 <section class="section"><div class="wrap"><h2>Beta operations</h2><p class="sub">Sample founder dashboard for weekly product reviews.</p><div class="ops"><div class="card metric"><span class="small">Active testers</span><b>12</b></div><div class="card metric"><span class="small">Match helpfulness</span><b>84%</b></div><div class="card metric"><span class="small">Feedback items</span><b>7</b></div><div class="card metric"><span class="small">Alerts sent</span><b>31</b></div></div></div></section>
 
-<section class="section" id="feedback"><div class="wrap"><div class="card"><h2>Tester feedback</h2><p>For this public beta, testers should focus on whether the match logic feels useful, whether the score explanations make sense, and what would make them return weekly.</p><a class="cta" href="mailto:francobrandolino7@gmail.com?subject=Student%20Hire%20Beta%20Feedback">Send beta feedback</a></div></div></section>
+<section class="section" id="feedback"><div class="wrap"><div class="card"><h2>Tester feedback</h2><p>Tell us what broke, what confused you, or why a match felt wrong. This feedback should drive the weekly beta fixes.</p><div class="field"><label>Your feedback</label><textarea id="fbText" placeholder="Example: This job scored 90% but conflicts with my Tuesday lecture."></textarea></div><div class="controls"><button class="btn2 primary" onclick="sendFeedback()">Prepare feedback email</button><span id="fbMsg" class="success"></span></div></div></div></section>
 </main>
 <footer class="footer"><div class="wrap">Student Hire beta · Jobs that fit your student life.</div></footer>
+
+<script>
+(function(){
+  const jobs=[
+    {id:1,title:"Social Media Assistant",company:"Northline Coffee Co.",pay:20,hours:15,base:96,keywords:["social media","communication","marketing"]},
+    {id:2,title:"Campus Brand Ambassador",company:"Loop Mobile",pay:19,hours:12,base:92,keywords:["communication","social media","marketing"]},
+    {id:3,title:"Operations Assistant",company:"Metro Market Labs",pay:21,hours:20,base:86,keywords:["excel","operations","customer service"]},
+    {id:4,title:"Event Staff & Guest Services",company:"Union Hall Events",pay:18,hours:12,base:69,keywords:["customer service","events","communication"]}
+  ];
+  const scoreEls=[...document.querySelectorAll(".job .score")];
+  const jobCards=[...document.querySelectorAll(".job")];
+  let profile={};
+  try{profile=JSON.parse(localStorage.getItem("studentHireProfile")||"{}")}catch(e){}
+  let saved=[];
+  try{saved=JSON.parse(localStorage.getItem("studentHireApplications")||"[]")}catch(e){}
+
+  function val(id, fallback=""){const el=document.getElementById(id);return el?el.value:fallback}
+  function setVal(id,v){const el=document.getElementById(id);if(el && v!==undefined && v!==null)el.value=v}
+  function normalize(s){return String(s||"").toLowerCase()}
+  function recalc(){
+    const skills=normalize(profile.skills||val("pSkills"));
+    const interests=normalize(profile.interests||val("pInterests"));
+    const minPay=Number(profile.pay||val("pPay",18));
+    const maxHours=Number(profile.maxHours||val("pMaxHours",20));
+    jobs.forEach((j,i)=>{
+      let s=j.base;
+      if(j.pay<minPay)s-=Math.min(12,(minPay-j.pay)*4);
+      if(j.hours>maxHours)s-=Math.min(14,(j.hours-maxHours)*3);
+      const hits=j.keywords.filter(k=>skills.includes(k)||interests.includes(k)).length;
+      s+=Math.min(4,hits);
+      s=Math.max(55,Math.min(99,Math.round(s)));
+      j.score=s;
+      if(scoreEls[i])scoreEls[i].textContent=s+"%";
+    });
+  }
+  function saveProfile(){
+    profile={
+      name:val("pName"),school:val("pSchool"),program:val("pProgram"),location:val("pLocation"),
+      minHours:Number(val("pMinHours",8)),maxHours:Number(val("pMaxHours",20)),
+      pay:Number(val("pPay",18)),threshold:Number(val("pThreshold",85)),
+      skills:val("pSkills"),interests:val("pInterests"),availability:val("pAvailability"),exams:val("pExams")
+    };
+    localStorage.setItem("studentHireProfile",JSON.stringify(profile));
+    recalc();
+    const m=document.getElementById("profileMsg");if(m)m.textContent="Saved on this device. Match scores updated.";
+  }
+  window.saveProfile=saveProfile;
+
+  Object.entries(profile).forEach(([k,v])=>{
+    const map={name:"pName",school:"pSchool",program:"pProgram",location:"pLocation",minHours:"pMinHours",maxHours:"pMaxHours",pay:"pPay",threshold:"pThreshold",skills:"pSkills",interests:"pInterests",availability:"pAvailability",exams:"pExams"};
+    if(map[k])setVal(map[k],v);
+  });
+
+  function saveJob(job){
+    if(!saved.some(x=>x.id===job.id)) saved.push({id:job.id,title:job.title,company:job.company,score:job.score,status:"Saved"});
+    localStorage.setItem("studentHireApplications",JSON.stringify(saved));
+    renderTracker();
+  }
+  window.saveJobById=function(id){const j=jobs.find(x=>x.id===id);if(j)saveJob(j)}
+  window.askAI=function(id){
+    const j=jobs.find(x=>x.id===id);if(!j)return;
+    setVal("aiJob",j.title);
+    document.getElementById("ai").scrollIntoView({behavior:"smooth"});
+  }
+  function renderTracker(){
+    const el=document.getElementById("appTracker");if(!el)return;
+    if(!saved.length){el.innerHTML='<div class="empty">No saved jobs yet. Use the Save job button on any match.</div>';return}
+    el.innerHTML='<table class="appTable"><thead><tr><th>Role</th><th>Company</th><th>Fit</th><th>Status</th><th></th></tr></thead><tbody>'+
+      saved.map(x=>'<tr><td>'+x.title+'</td><td>'+x.company+'</td><td>'+x.score+'%</td><td><select onchange="updateStatus('+x.id+',this.value)">'+
+      ["Saved","Applied","Interview","Offer","Rejected","Withdrawn"].map(s=>'<option'+(s===x.status?' selected':'')+'>'+s+'</option>').join("")+
+      '</select></td><td><button class="btn2" onclick="removeSaved('+x.id+')">Remove</button></td></tr>').join("")+'</tbody></table>';
+  }
+  window.updateStatus=function(id,status){const x=saved.find(v=>v.id===id);if(x)x.status=status;localStorage.setItem("studentHireApplications",JSON.stringify(saved))}
+  window.removeSaved=function(id){saved=saved.filter(x=>x.id!==id);localStorage.setItem("studentHireApplications",JSON.stringify(saved));renderTracker()}
+
+  jobCards.forEach((card,i)=>{
+    const j=jobs[i]; if(!j)return;
+    const controls=document.createElement("div");controls.className="controls";
+    controls.innerHTML='<button class="btn2 primary" onclick="saveJobById('+j.id+')">Save job</button><button class="btn2" onclick="askAI('+j.id+')">Ask AI</button>';
+    card.appendChild(controls);
+  });
+
+  window.runAI=function(){
+    const title=val("aiJob","Selected role"); const tool=val("aiTool","Should I Apply?");
+    const j=jobs.find(x=>x.title===title)||jobs[0];
+    const availability=profile.availability||"your stated availability";
+    const answers={
+      "Should I Apply?":"Yes — this role is currently a "+j.score+"% match. Strongest signals: pay/hours are close to your preferences and the role overlaps with your stated skills/interests. Before applying, verify the exact shift expectations against "+availability+".",
+      "Resume Review":"For "+title+", lead with relevant outcomes rather than task lists. Highlight customer-facing results, Excel/communication work, reliability, and any social media or operations examples. Do not add tools or experience you cannot defend in an interview.",
+      "Interview Prep":"Prepare three short STAR stories: balancing school with commitments, solving a customer/team problem, and learning something quickly. Also prepare a precise answer about your weekly availability and exam periods.",
+      "Tailored Cover Letter":"Start with why the role fits your student schedule and career direction, then give 1–2 evidence-backed examples of relevant skills. Keep it concise and do not claim experience you do not have.",
+      "Skill-Gap Plan":"Pick the biggest missing skill from the posting. Spend 60–90 minutes learning the basics, build one tiny proof project, and add it honestly to your portfolio or resume before applying.",
+      "Application Answers":"Answer with specific evidence from school, work, volunteering or projects. Use numbers where you genuinely have them; otherwise describe the outcome clearly without inventing metrics.",
+      "Networking Message":"Hi — I’m a student exploring "+title+" opportunities and your team caught my attention. I’d appreciate any advice on what makes a strong student candidate for this kind of role. Thanks for your time.",
+      "Study/Work Compatibility":"Compare the employer’s fixed shifts with your classes and exam blackouts. A good fit should preserve study time and stay inside your preferred weekly-hour range.",
+      "Scam/Risk Check":"Verify the employer domain, never pay to apply, be cautious with cheque/e-transfer requests, and confirm the role exists on an official company or trusted job page before sharing sensitive information."
+    };
+    const out=document.getElementById("aiOutput");if(out)out.textContent=answers[tool]||"Demo guidance ready.";
+  };
+
+  window.sendFeedback=function(){
+    const text=val("fbText").trim(); const msg=document.getElementById("fbMsg");
+    if(!text){if(msg)msg.textContent="Add a short note first.";return}
+    localStorage.setItem("studentHireLastFeedback",text);
+    const subject=encodeURIComponent("Student Hire Beta Feedback");
+    const body=encodeURIComponent(text+"\n\nSent from Student Hire beta.");
+    window.location.href="mailto:francobrandolino7@gmail.com?subject="+subject+"&body="+body;
+    if(msg)msg.textContent="Opening your email app with the feedback filled in.";
+  };
+
+  recalc();
+  renderTracker();
+})();
+</script>
 </body></html>
