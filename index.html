@@ -37,6 +37,9 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 .brandword{font-weight:900;letter-spacing:-.03em}.brandword span{color:#3366ff}
 .agentBadge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#0d6b55;background:#e9f8f3;border:1px solid #c7eadf;border-radius:999px;padding:5px 8px}
 .modalBack{position:fixed;inset:0;background:rgba(20,32,51,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modalBack.open{display:flex}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 30px 80px rgba(20,32,51,.22);padding:22px}.modal h3{margin:0 0 6px}.checkrow{display:flex;gap:10px;align-items:flex-start;margin:14px 0}.packet{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px;white-space:pre-wrap;font-size:13px;line-height:1.55}.statusbox{margin-top:12px;padding:12px;border-radius:10px;background:#fff7e6;border:1px solid #f0d7a3;color:#73510a}
+
+.accountCard{max-width:760px}.authTabs{display:flex;gap:6px;margin-bottom:18px}.authTab{border:1px solid var(--line);background:#fff;color:var(--muted);padding:9px 14px;border-radius:10px;font-weight:800;cursor:pointer}.authTab.active{background:#17324d;color:#fff;border-color:#17324d}.authForm{display:grid;grid-template-columns:1fr 1fr;gap:12px}.authForm .full{grid-column:1/-1}.authStatus{margin-top:12px;padding:11px 12px;border-radius:10px;display:none}.authStatus.show{display:block}.authStatus.info{background:#eef4ff;color:#284a88;border:1px solid #d8e5ff}.authStatus.error{background:#fff0f0;color:#8f2d2d;border:1px solid #f4caca}.authStatus.success{background:#edf9f5;color:#0c6d54;border:1px solid #c8eadf}.accountNext{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.lockedSection{opacity:.55;pointer-events:none;user-select:none}
+@media(max-width:620px){.authForm{grid-template-columns:1fr}.authForm .full{grid-column:auto}}
 </style>
 </head>
 <body>
@@ -123,18 +126,25 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 </div></div></section>
 
 <section class="section" id="account"><div class="wrap"><div class="eyebrow">Step 2</div><h2>Create your Student Hire account</h2>
-<p class="sub">Your account unlocks live job listings and lets your profile follow you when you sign back in. Your actual resume file is not uploaded to the cloud yet.</p>
-<div class="card">
+<p class="sub">Your account unlocks live jobs, personalized matching, application tracking and the Student Hire application agent.</p>
+<div class="card accountCard">
 <div id="signedOutAccount">
-<div class="authbar"><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="new-password" placeholder="Password (8+ characters)"><button class="btn2 primary" onclick="createAccount()">Create account</button><button class="btn2" onclick="signInAccount()">Sign in</button></div>
-<div id="authMsg" class="success" style="margin-top:10px"></div>
+<div class="authTabs"><button id="tabCreate" class="authTab active" onclick="setAuthMode('create')">Create account</button><button id="tabSignIn" class="authTab" onclick="setAuthMode('signin')">Sign in</button></div>
+<div class="authForm">
+<div class="field full"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@school.ca"></div>
+<div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters"></div>
+<div class="field" id="confirmField"><label>Confirm password</label><input id="authPasswordConfirm" type="password" autocomplete="new-password" placeholder="Re-enter password"></div>
 </div>
-<div id="signedInAccount" style="display:none"><div class="row"><div><strong id="accountEmail"></strong><div class="small">Student Hire account active</div></div><button class="btn2" onclick="signOutAccount()">Sign out</button></div><div id="cloudSaveMsg" class="success" style="margin-top:10px"></div></div>
+<div class="controls" style="margin-top:14px"><button id="primaryAuthBtn" class="btn2 primary" onclick="submitAuth()">Create account</button><button class="btn2" type="button" onclick="togglePasswords()">Show passwords</button></div>
+<div id="authMsg" class="authStatus info"></div>
+<div id="confirmNotice" class="accountNext" style="display:none"><strong>Check your inbox</strong><p class="small">We sent a confirmation link. Open it, then return here and sign in. The confirmation link will bring you back to Student Hire.</p><button class="btn2" onclick="setAuthMode('signin')">I confirmed my email — sign in</button></div>
+</div>
+<div id="signedInAccount" style="display:none"><div class="row" style="align-items:center"><div><div class="agentBadge">● Account active</div><h3 id="accountEmail" style="margin:8px 0 2px"></h3><div class="small">Your Student Hire profile is connected to this account.</div></div><button class="btn2" onclick="signOutAccount()">Sign out</button></div><div id="cloudSaveMsg" class="success" style="margin-top:10px"></div><div class="accountNext"><button class="btn2 primary" onclick="document.getElementById('matches').scrollIntoView({behavior:'smooth'})">Go to live job search</button></div></div>
 </div></div></section>
 
-<section class="section" id="ai"><div class="wrap"><h2>AI Career Copilot</h2><p class="sub">This beta uses deterministic demo coaching. A live AI model can plug into the same workflow server-side later.</p><div class="two"><div class="card"><div class="field"><label>Selected job</label><input id="aiJob" placeholder="Choose a job from Matches or type a role"></div><div class="field" style="margin-top:10px"><label>Tool</label><select id="aiTool"><option>Should I Apply?</option><option>Resume Review</option><option>Interview Prep</option><option>Tailored Cover Letter</option><option>Skill-Gap Plan</option><option>Application Answers</option><option>Networking Message</option><option>Study/Work Compatibility</option><option>Scam/Risk Check</option></select></div><div class="controls"><button class="btn2 primary" onclick="runAI()">Run career tool</button></div></div><div class="card"><div id="aiOutput" class="aiBox">Choose a tool and run it for the selected job.</div><p class="small">The assistant should never invent experience, credentials, employer facts or skills you do not have.</p></div></div></div></section>
+<section class="section" id="ai" data-account-only="true"><div class="wrap"><h2>AI Career Copilot</h2><p class="sub">This beta uses deterministic demo coaching. A live AI model can plug into the same workflow server-side later.</p><div class="two"><div class="card"><div class="field"><label>Selected job</label><input id="aiJob" placeholder="Choose a job from Matches or type a role"></div><div class="field" style="margin-top:10px"><label>Tool</label><select id="aiTool"><option>Should I Apply?</option><option>Resume Review</option><option>Interview Prep</option><option>Tailored Cover Letter</option><option>Skill-Gap Plan</option><option>Application Answers</option><option>Networking Message</option><option>Study/Work Compatibility</option><option>Scam/Risk Check</option></select></div><div class="controls"><button class="btn2 primary" onclick="runAI()">Run career tool</button></div></div><div class="card"><div id="aiOutput" class="aiBox">Choose a tool and run it for the selected job.</div><p class="small">The assistant should never invent experience, credentials, employer facts or skills you do not have.</p></div></div></div></section>
 
-<section class="section" id="applications"><div class="wrap"><h2>Application tracker</h2><p class="sub">Save jobs from Matches, then move them through your pipeline.</p><div class="card"><div id="appTracker"></div></div></div></section>
+<section class="section" id="applications" data-account-only="true"><div class="wrap"><h2>Application tracker</h2><p class="sub">Save jobs from Matches, then move them through your pipeline.</p><div class="card"><div id="appTracker"></div></div></div></section>
 
 <section class="section" id="why"><div class="wrap"><h2>Why Student Hire</h2><p class="sub">The wedge is better fit, not simply more listings.</p><div class="grid3"><div class="card"><strong>The problem</strong><p>Students waste time on roles that clash with class schedules, commute limits, weekly hours or exam periods.</p></div><div class="card"><strong>The solution</strong><p>Student Hire combines student-specific constraints with transparent scoring and an AI action layer.</p></div><div class="card"><strong>Business model</strong><p>Students stay free. Employers can pay for postings, featured placement and premium recruiting tools later.</p></div></div></div></section>
 
@@ -503,42 +513,88 @@ async function extractResumeText(file){
 async function setAuthUI(user){
   window.studentHireUser=user||null;
   const out=document.getElementById("signedOutAccount"), inn=document.getElementById("signedInAccount");
-  if(out)out.style.display=user?"none":"block"; if(inn)inn.style.display=user?"block":"none";
-  if(user){const e=document.getElementById("accountEmail");if(e)e.textContent=user.email||"Signed in";
+  if(out)out.style.display=user?"none":"block";
+  if(inn)inn.style.display=user?"block":"none";
+  document.querySelectorAll("[data-account-only='true']").forEach(el=>{el.style.display=user?"block":"none"});
+  if(user){
+    const e=document.getElementById("accountEmail");if(e)e.textContent=user.email||"Signed in";
     const cloud=user.user_metadata?.student_hire_profile;
-    if(cloud&&Object.keys(cloud).length){localStorage.setItem("studentHireProfile",JSON.stringify({...cloud,resumeName:cloud.resumeName||localProfile().resumeName}));}
+    if(cloud&&Object.keys(cloud).length){
+      const current=localProfile();
+      localStorage.setItem("studentHireProfile",JSON.stringify({...cloud,resumeName:current.resumeName||cloud.resumeName,resumeText:current.resumeText||""}));
+    }
     const apps=user.user_metadata?.student_hire_apps;
     if(Array.isArray(apps))localStorage.setItem("studentHireApplications",JSON.stringify(apps));
   }
-  if(window.recalc)window.recalc();
-  else window.dispatchEvent(new Event("studenthire-auth-change"));
-}
-window.persistProfileToAccount=async p=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;
-  const safe={...p};delete safe.resumeText;
-  const {error}=await supabase.auth.updateUser({data:{student_hire_profile:safe}});
-  const el=document.getElementById("cloudSaveMsg");if(el)el.textContent=error?"Profile saved locally; cloud sync failed.":"Profile synced to your Student Hire account.";
+  if(window.recalc)window.recalc(); else window.dispatchEvent(new Event("studenthire-auth-change"));
 };
-window.persistAppsToAccount=async apps=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;await supabase.auth.updateUser({data:{student_hire_apps:apps}})};
+let authMode="create";
+function showAuthMessage(message,type="info"){
+  const el=document.getElementById("authMsg");if(!el)return;
+  el.textContent=message||"";el.className="authStatus "+type+(message?" show":"");
+}
+window.setAuthMode=function(mode){
+  authMode=mode==="signin"?"signin":"create";
+  document.getElementById("tabCreate")?.classList.toggle("active",authMode==="create");
+  document.getElementById("tabSignIn")?.classList.toggle("active",authMode==="signin");
+  const confirm=document.getElementById("confirmField");if(confirm)confirm.style.display=authMode==="create"?"grid":"none";
+  const btn=document.getElementById("primaryAuthBtn");if(btn)btn.textContent=authMode==="create"?"Create account":"Sign in";
+  const pass=document.getElementById("authPassword");if(pass)pass.autocomplete=authMode==="create"?"new-password":"current-password";
+  const notice=document.getElementById("confirmNotice");if(notice&&authMode==="signin")notice.style.display="none";
+  showAuthMessage("");
+};
+window.togglePasswords=function(){
+  const a=document.getElementById("authPassword"),b=document.getElementById("authPasswordConfirm");
+  const show=a?.type==="password";if(a)a.type=show?"text":"password";if(b)b.type=show?"text":"password";
+};
+window.submitAuth=async function(){
+  if(authMode==="signin")return window.signInAccount();
+  return window.createAccount();
+};
 window.createAccount=async()=>{
-  const p=localProfile(), msg=document.getElementById("authMsg");
-  if(!profileReady(p)){if(msg)msg.textContent="Finish your resume-first profile before creating an account.";return}
-  const email=document.getElementById("authEmail").value.trim(), password=document.getElementById("authPassword").value;
-  if(!email||password.length<8){if(msg)msg.textContent="Enter a valid email and a password with at least 8 characters.";return}
-  const safe={...p};delete safe.resumeText;
-  const {data,error}=await supabase.auth.signUp({email,password,options:{data:{student_hire_profile:safe,student_hire_apps:localApps()}}});
-  if(error){if(msg)msg.textContent=error.message;return}
-  if(data.session){if(msg)msg.textContent="Account created. Live jobs unlocked.";await setAuthUI(data.user);document.getElementById("matches")?.scrollIntoView({behavior:"smooth"});}
-  else {if(msg)msg.textContent="Account created. Check your email to confirm, then sign in here."}
+  const p=localProfile(), email=document.getElementById("authEmail")?.value.trim()||"", password=document.getElementById("authPassword")?.value||"", confirm=document.getElementById("authPasswordConfirm")?.value||"";
+  const btn=document.getElementById("primaryAuthBtn");
+  if(!profileReady(p)){showAuthMessage("Finish your resume-first profile before creating an account.","error");return}
+  if(!email||!/^\S+@\S+\.\S+$/.test(email)){showAuthMessage("Enter a valid email address.","error");return}
+  if(password.length<8){showAuthMessage("Password must be at least 8 characters.","error");return}
+  if(password!==confirm){showAuthMessage("The passwords do not match.","error");return}
+  if(btn){btn.disabled=true;btn.textContent="Creating account…"}showAuthMessage("Creating your Student Hire account…","info");
+  try{
+    const safe={...p};delete safe.resumeText;
+    const {data,error}=await supabase.auth.signUp({
+      email,password,
+      options:{
+        emailRedirectTo:location.origin+"/#account",
+        data:{student_hire_profile:safe,student_hire_apps:localApps()}
+      }
+    });
+    if(error)throw error;
+    if(data.session){
+      showAuthMessage("Account created. Your live job search is unlocked.","success");
+      await setAuthUI(data.user);
+      document.getElementById("matches")?.scrollIntoView({behavior:"smooth"});
+    }else{
+      showAuthMessage("Account created. Confirm your email to finish setup.","success");
+      const n=document.getElementById("confirmNotice");if(n)n.style.display="block";
+    }
+  }catch(e){showAuthMessage(e?.message||"Could not create the account. Try again.","error")}
+  finally{if(btn){btn.disabled=false;btn.textContent="Create account"}}
 };
 window.signInAccount=async()=>{
-  const email=document.getElementById("authEmail").value.trim(), password=document.getElementById("authPassword").value, msg=document.getElementById("authMsg");
-  const {data,error}=await supabase.auth.signInWithPassword({email,password});
-  if(error){if(msg)msg.textContent=error.message;return}
-  if(msg)msg.textContent="Signed in. Live jobs unlocked.";await setAuthUI(data.user);
-  const p=localProfile();if(window.persistProfileToAccount&&profileReady(p))await window.persistProfileToAccount(p);
-  location.reload();
+  const email=document.getElementById("authEmail")?.value.trim()||"", password=document.getElementById("authPassword")?.value||"", btn=document.getElementById("primaryAuthBtn");
+  if(!email||!password){showAuthMessage("Enter your email and password.","error");return}
+  if(btn){btn.disabled=true;btn.textContent="Signing in…"}showAuthMessage("Signing in…","info");
+  try{
+    const {data,error}=await supabase.auth.signInWithPassword({email,password});
+    if(error)throw error;
+    showAuthMessage("Signed in. Live jobs are unlocked.","success");
+    await setAuthUI(data.user);
+    const p=localProfile();if(window.persistProfileToAccount&&profileReady(p))await window.persistProfileToAccount(p);
+    document.getElementById("matches")?.scrollIntoView({behavior:"smooth"});
+  }catch(e){showAuthMessage(e?.message||"Could not sign in. Check your email and password.","error")}
+  finally{if(btn){btn.disabled=false;btn.textContent=authMode==="signin"?"Sign in":"Create account"}}
 };
-window.signOutAccount=async()=>{await supabase.auth.signOut();window.studentHireUser=null;location.reload()};
+window.signOutAccount=async()=>{await supabase.auth.signOut();window.studentHireUser=null;location.hash="account";location.reload()};
 
 window.liveSearchJobs=[];
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
@@ -558,7 +614,8 @@ window.searchLiveJobs=async function(){
   const q=document.getElementById("jobQuery")?.value.trim(), location=document.getElementById("jobLocation")?.value.trim();
   const msg=document.getElementById("jobSearchMsg"), box=document.getElementById("liveResults");
   if(!q){if(msg)msg.textContent="Enter a job title or keyword first.";return}
-  const {data:{session}}=await supabase.auth.getSession();if(!session?.access_token){if(msg)msg.textContent="Sign in to search current jobs.";return}
+  setAuthMode("create");
+const {data:{session}}=await supabase.auth.getSession();if(!session?.access_token){if(msg)msg.textContent="Sign in to search current jobs.";return}
   if(msg)msg.textContent="Searching current Job Bank listings…";if(box)box.innerHTML="";
   try{
     const u=new URL("https://student-hire-agent.onrender.com/api/jobs");u.searchParams.set("q",q);if(location)u.searchParams.set("location",location);
