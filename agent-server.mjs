@@ -78,7 +78,13 @@ const server=http.createServer(async(req,res)=>{
           return {id,jobNumber:jobNo,title,employer,location:locationText,salary,postedAt:posted,url,source:"Job Bank"};
         }catch{return null}
       }));
-      const results=details.filter(Boolean);
+      let results=details.filter(Boolean);
+      if(location){
+        const target=location.split(",")[0].trim().toLowerCase();
+        const gta=target==="toronto"?["toronto","north york","scarborough","etobicoke","east york","york","mississauga","vaughan","markham","richmond hill","brampton","pickering"]:[target];
+        const local=results.filter(x=>gta.some(city=>String(x.location||"").toLowerCase().includes(city)));
+        if(local.length>=3)results=local;
+      }
       return send(res,200,{query:q,location,results,sourceUrl:String(searchUrl)});
     }
     if(req.method!=="POST"||req.url!=="/api/apply")return send(res,404,{error:"not_found"});
