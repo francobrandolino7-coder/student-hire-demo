@@ -154,7 +154,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
   <div class="card">
     <div class="row" style="align-items:center;justify-content:space-between"><div><div class="tag">YOUR RESUME</div><h3 style="margin:5px 0">Resume snapshot</h3></div><button class="btn2" onclick="document.getElementById('profile').scrollIntoView({behavior:'smooth'})">Edit profile</button></div>
     <div class="resumeFile"><div class="resumeFileIcon">CV</div><div><strong id="dashResumeName">Resume not available</strong><div class="small" id="dashResumeStatus">Re-upload your resume to refresh parsing.</div></div></div>
-    <div class="resumeMeta">
+    <div id="dashResumePreview" class="packet" style="margin-top:14px;max-height:220px;overflow:auto">Resume text will appear here after upload.</div><div class="resumeMeta">
       <div><span>Name</span><b id="dashName">—</b></div>
       <div><span>School</span><b id="dashSchool">—</b></div>
       <div><span>Program</span><b id="dashProgram">—</b></div>
@@ -731,6 +731,8 @@ window.renderStudentDashboard=async function(){
   setText("dashboardWelcome",p.name?"Welcome, "+p.name.split(" ")[0]:"Your career dashboard");
   setText("dashResumeName",p.resumeName,"Resume not available");
   setText("dashResumeStatus",p.resumeText?"Resume text is available for coaching.":"Resume facts are saved; re-upload for line-level coaching.","");
+  const preview=document.getElementById("dashResumePreview");
+  if(preview)preview.textContent=p.resumeText?String(p.resumeText).slice(0,5000):"Re-upload the resume in this browser to display and analyze the original text.";
   setText("dashName",p.name);
   setText("dashSchool",p.school);
   setText("dashProgram",p.program);
