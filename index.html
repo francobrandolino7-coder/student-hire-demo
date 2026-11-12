@@ -47,7 +47,18 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 <section class="section" id="matches"><div class="wrap"><div class="row" style="align-items:center;justify-content:space-between"><div><h2>Your live job matches</h2><p class="sub" id="matchIntro">Complete your profile and create a Student Hire account to unlock current job listings.</p></div><span class="agentBadge">● Agent-assisted applications</span></div>
 <div id="authGate" class="locked">Your personalized live listings will appear here after you create or sign in to your Student Hire account.</div>
 <div id="jobsContent" style="display:none">
-<div class="matchgrid"><div class="jobs">
+<div class="card" style="margin-bottom:16px">
+  <div class="eyebrow">Search current jobs</div>
+  <h3 style="margin:6px 0 12px">Find real openings</h3>
+  <div class="authbar">
+    <input id="jobQuery" placeholder="Job title or keyword, e.g. marketing, retail, finance">
+    <input id="jobLocation" placeholder="Location, e.g. Toronto, ON">
+    <button class="btn2 primary" onclick="searchLiveJobs()">Search jobs</button>
+  </div>
+  <div id="jobSearchMsg" class="small" style="margin-top:10px">Search results come from current public Job Bank postings.</div>
+</div>
+<div id="liveResults" class="jobs" style="margin-bottom:18px"></div>
+<div class="matchgrid"><div class="jobs"><div class="small" style="font-weight:800;margin-bottom:2px">FEATURED CURRENT LISTINGS</div>
 <div class="card job"><div class="top"><div><h3>Intern — Product Marketing, Winter 2027</h3><div class="small">EQ Bank · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">Student</span><span class="pill">Hybrid</span><span class="pill">Jan–Apr 2027</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Verified Nov 12, 2026 · employer posting</div><div class="controls"><button class="btn2 primary" onclick="openApplyAgent(1)">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="https://jobs.lever.co/eqbank/d2a1c83a-dc7a-4b4f-a159-98b21e6e0616">Source listing</a></div></div>
 
 <div class="card job"><div class="top"><div><h3>Marketing Assistant — Internship</h3><div class="small">Laserglow Technologies · North York, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$20/hr</span><span class="pill">Internship</span><span class="pill">On site</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3712067 · posted Nov 4, 2026</div><div class="controls"><button class="btn2 primary" onclick="openApplyAgent(2)">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?d=50&fn21=11202&mid=22437&page=1&sort=M">Source listing</a></div></div>
@@ -234,19 +245,28 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
       if(fe)fe.textContent=complete?v+"%":"—"; if(be)be.style.width=(complete?v:0)+"%";
     });
   }
-  window.handleResume=function(input){
-    const file=input.files&&input.files[0]; const el=document.getElementById("resumeStatus");
+  window.handleResume=async function(input){
+    const file=input.files&&input.files[0], el=document.getElementById("resumeStatus");
     if(!file){if(el)el.textContent="";return}
     profile.resumeName=file.name;
     profile.resumeText="";
-    if(file.type==="text/plain" || file.name.toLowerCase().endsWith(".txt")){
-      const reader=new FileReader();
-      reader.onload=()=>{profile.resumeText=String(reader.result||"").slice(0,30000);localStorage.setItem("studentHireProfile",JSON.stringify(profile));recalc();};
-      reader.readAsText(file);
-    }else{
-      localStorage.setItem("studentHireProfile",JSON.stringify(profile));
-    }
-    if(el)el.textContent="Resume selected: "+file.name+" — kept on this device in guest beta.";
+    if(el)el.textContent="Reading resume and autofilling factual fields…";
+    try{
+      if(typeof window.extractResumeFactsFromFile==="function"){
+        const facts=await window.extractResumeFactsFromFile(file);
+        profile.resumeText=facts.text||"";
+        const fill=(id,v)=>{const node=document.getElementById(id);if(node&&v&&!node.value.trim())node.value=v};
+        fill("pName",facts.name);fill("pSchool",facts.school);fill("pProgram",facts.program);fill("pPhone",facts.phone);fill("pSkills",facts.skills);
+        const authEmail=document.getElementById("authEmail");if(authEmail&&facts.email&&!authEmail.value.trim())authEmail.value=facts.email;
+        if(el)el.textContent="Autofilled what we could from "+file.name+". Review the factual fields, then complete your goals and preferences yourself.";
+      }else if(file.type==="text/plain"||file.name.toLowerCase().endsWith(".txt")){
+        profile.resumeText=String(await file.text()).slice(0,50000);
+        if(el)el.textContent="Resume loaded. Review the profile fields below.";
+      }else{
+        if(el)el.textContent="Resume selected: "+file.name+".";
+      }
+    }catch(e){if(el)el.textContent=e?.message||"Resume selected, but automatic parsing failed. You can fill the factual fields manually."}
+    localStorage.setItem("studentHireProfile",JSON.stringify(profile));recalc();
   }
   function saveProfile(){
     profile={
@@ -412,17 +432,74 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
       if(status)status.textContent=e?.message||"Could not start the application agent.";
     }
   };
+  window.addEventListener("studenthire-open-live-apply",e=>{
+    const x=e.detail;if(!x)return;
+    pendingAgentJob={id:x.localId,title:x.title,company:x.employer||"Employer",pay:0,hours:null,score:x.score,sourceUrl:x.url,keywords:[]};
+    const modal=document.getElementById("applyModal"), title=document.getElementById("applyTitle"), packet=document.getElementById("applyPacket"), src=document.getElementById("applySource"), status=document.getElementById("applyStatus");
+    const p=profile;
+    if(title)title.textContent="Review application — "+x.title;
+    const lines=["Role: "+x.title,"Employer: "+(x.employer||""),"Location: "+(x.location||""),"Salary: "+(x.salary||""),"Current fit: "+(x.score===null?"Not scored":x.score+"%"),"","Candidate: "+(p.name||""),"School / program: "+[p.school,p.program].filter(Boolean).join(" — "),"Location: "+(p.location||""),...(p.phone?["Phone: "+p.phone]:[]),"Resume on profile: "+(p.resumeName||""),"Skills: "+(p.skills||""),"About: "+(p.about||""),"Long-term direction: "+(p.future||""),"Short-term goals: "+(p.shortGoals||""),"Availability: "+(p.availability||""),"Minimum pay target: $"+(p.pay||0)+"/hr","Monthly income goal: $"+(p.monthlyGoal||0),"","Agent rule: do not invent or infer missing application answers."];
+    if(packet)packet.textContent=lines.join("\n");if(src)src.href=x.url;if(status)status.textContent="Review the packet. If the employer asks something not in your profile, the agent must stop for your input instead of guessing.";
+    const consent=document.getElementById("applyConsent");if(consent)consent.checked=false;modal?.classList.add("open");
+  });
   recalc();
   renderTracker();
 })();
 </script>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
+import * as mammoth from "https://cdn.jsdelivr.net/npm/mammoth@1.9.0/+esm";
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
 const supabase=createClient("https://c--f2684d00-06a0-47e6-a2f2-d3623ae08849-prod.lovable.cloud","sb_publishable_R4K_XQE20WIevzostvW6Tw_s7OiRdPZ",{auth:{persistSession:true,autoRefreshToken:true}});
 window.studentHireSupabase=supabase;
+window.extractResumeFactsFromFile=async function(file){
+  const text=await extractResumeText(file);
+  return parseResumeFacts(text);
+};
 function localProfile(){try{return JSON.parse(localStorage.getItem("studentHireProfile")||"{}")}catch{return {}}}
 function localApps(){try{return JSON.parse(localStorage.getItem("studentHireApplications")||"[]")}catch{return []}}
 function profileReady(p){return Boolean(p.resumeName&&p.about&&p.future&&p.shortGoals&&Number(p.pay)>0&&Number(p.monthlyGoal)>0&&p.availability&&Number(p.maxHours)>0)}
+function cleanResumeText(text){return String(text||"").replace(/\r/g,"").replace(/[ \t]+/g," ").replace(/\n{3,}/g,"\n\n").trim()}
+function pickFirstLine(lines,pred){for(const line of lines){const v=line.trim();if(v&&pred(v))return v}return ""}
+function parseResumeFacts(text){
+  const cleaned=cleanResumeText(text), lines=cleaned.split("\n").map(x=>x.trim()).filter(Boolean);
+  const email=(cleaned.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)||[])[0]||"";
+  const phone=(cleaned.match(/(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}/)||[])[0]||"";
+  const name=pickFirstLine(lines.slice(0,12),v=>{
+    if(v.length<4||v.length>60||/@|\d{3}/.test(v))return false;
+    if(/resume|curriculum|profile|summary|objective|education|experience|skills/i.test(v))return false;
+    const words=v.split(/\s+/);return words.length>=2&&words.length<=5&&words.every(w=>/^[A-Za-zÀ-ÿ'’-]+$/.test(w));
+  });
+  const school=pickFirstLine(lines,v=>/(university|college|polytechnic|institute of technology|academy|school of)/i.test(v)&&v.length<120);
+  let program="";
+  const degreePattern=/(bachelor|master|diploma|certificate|b\.?comm|bba|ba\b|bsc|business management|computer science|engineering|marketing|finance|accounting|psychology|nursing|economics|commerce)/i;
+  const schoolIndex=school?lines.findIndex(x=>x===school):-1;
+  const nearby=schoolIndex>=0?lines.slice(Math.max(0,schoolIndex-2),Math.min(lines.length,schoolIndex+5)):lines;
+  program=pickFirstLine(nearby,v=>degreePattern.test(v)&&v!==school);
+  let skills="";
+  const sk=lines.findIndex(v=>/^skills(?:\s|$|:)/i.test(v));
+  if(sk>=0){
+    const arr=[];
+    for(let i=sk+1;i<Math.min(lines.length,sk+8);i++){if(/^(experience|education|projects|certifications|awards|volunteer|interests)\b/i.test(lines[i]))break;arr.push(lines[i])}
+    skills=arr.join(", ").replace(/[•|]/g,", ");
+  }
+  return {name,school,program,email,phone,skills,text:cleaned};
+}
+async function extractResumeText(file){
+  const name=file.name.toLowerCase();
+  if(name.endsWith(".txt"))return await file.text();
+  if(name.endsWith(".pdf")){
+    const buf=await file.arrayBuffer(), pdf=await pdfjsLib.getDocument({data:buf}).promise;let out=[];
+    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const content=await page.getTextContent();out.push(content.items.map(x=>x.str||"").join(" "))}
+    return out.join("\n");
+  }
+  if(name.endsWith(".docx")){
+    const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});return result.value||"";
+  }
+  if(name.endsWith(".doc"))throw new Error("Legacy .doc files are not parsed automatically yet. Upload PDF, DOCX, or TXT for autofill.");
+  return "";
+}
 async function setAuthUI(user){
   window.studentHireUser=user||null;
   const out=document.getElementById("signedOutAccount"), inn=document.getElementById("signedInAccount");
@@ -462,6 +539,49 @@ window.signInAccount=async()=>{
   location.reload();
 };
 window.signOutAccount=async()=>{await supabase.auth.signOut();window.studentHireUser=null;location.reload()};
+
+window.liveSearchJobs=[];
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function moneyFloor(s){const m=String(s||"").match(/\$\s*([\d,.]+)/);return m?Number(m[1].replace(/,/g,"")):0}
+function profileFit(job){
+  const p=localProfile();if(!profileReady(p))return null;
+  const text=[p.resumeText,p.about,p.skills,p.future,p.shortGoals].join(" ").toLowerCase();
+  const title=String(job.title||"").toLowerCase();let score=62;
+  const tokens=title.split(/[^a-z0-9]+/).filter(x=>x.length>3);
+  score+=Math.min(18,tokens.filter(t=>text.includes(t)).length*6);
+  const floor=moneyFloor(job.salary);if(floor&&Number(p.pay)>0)score+=floor>=Number(p.pay)?10:-8;
+  if(String(job.location||"").toLowerCase().includes(String(p.location||"").split(",")[0].toLowerCase()))score+=6;
+  if(p.future&&title.split(" ").some(t=>t.length>4&&p.future.toLowerCase().includes(t)))score+=6;
+  return Math.max(55,Math.min(98,Math.round(score)));
+}
+window.searchLiveJobs=async function(){
+  const q=document.getElementById("jobQuery")?.value.trim(), location=document.getElementById("jobLocation")?.value.trim();
+  const msg=document.getElementById("jobSearchMsg"), box=document.getElementById("liveResults");
+  if(!q){if(msg)msg.textContent="Enter a job title or keyword first.";return}
+  const {data:{session}}=await supabase.auth.getSession();if(!session?.access_token){if(msg)msg.textContent="Sign in to search current jobs.";return}
+  if(msg)msg.textContent="Searching current Job Bank listings…";if(box)box.innerHTML="";
+  try{
+    const u=new URL("https://student-hire-agent.onrender.com/api/jobs");u.searchParams.set("q",q);if(location)u.searchParams.set("location",location);
+    const r=await fetch(u,{headers:{authorization:"Bearer "+session.access_token}});
+    const data=await r.json();if(!r.ok)throw new Error(data.error||"Search failed.");
+    window.liveSearchJobs=(data.results||[]).map((j,i)=>({...j,localId:"live-"+i,score:profileFit(j)}));
+    if(!window.liveSearchJobs.length){if(msg)msg.textContent="No current results returned. Try a broader keyword or nearby location.";return}
+    if(msg)msg.textContent=window.liveSearchJobs.length+" current listing"+(window.liveSearchJobs.length===1?"":"s")+" found.";
+    box.innerHTML=window.liveSearchJobs.map((j,i)=>`<div class="card job">
+      <div class="top"><div><h3>${escapeHtml(j.title)}</h3><div class="small">${escapeHtml(j.employer||"Employer")} · ${escapeHtml(j.location||"Location not listed")}</div></div><div class="score">${j.score===null?"—":j.score+"%"}</div></div>
+      <div class="meta">${j.salary?`<span class="pill">${escapeHtml(j.salary)}</span>`:""}<span class="pill">Job Bank</span>${j.postedAt?`<span class="pill">${escapeHtml(j.postedAt.slice(0,10))}</span>`:""}</div>
+      <div class="good">${j.score===null?"Complete your profile to calculate fit.":"✓ Personalized fit based on your profile and goals."}</div>
+      <div class="warn">${j.score!==null&&j.score<75?"△ Review the details carefully before applying.":"△ Verify schedule, requirements and compensation on the source listing."}</div>
+      <div class="controls"><button class="btn2 primary" onclick="openLiveApplyAgent(${i})">Apply with Student Hire</button><a class="btn2" target="_blank" rel="noopener" href="${escapeHtml(j.url)}">Source listing</a></div>
+    </div>`).join("");
+  }catch(e){if(msg)msg.textContent=e?.message||"Could not search jobs right now."}
+};
+window.openLiveApplyAgent=function(index){
+  const j=window.liveSearchJobs?.[index];if(!j)return;
+  if(!window.studentHireUser){document.getElementById("account")?.scrollIntoView({behavior:"smooth"});return}
+  if(!profileReady(localProfile())){document.getElementById("profile")?.scrollIntoView({behavior:"smooth"});return}
+  window.dispatchEvent(new CustomEvent("studenthire-open-live-apply",{detail:j}));
+};
 const {data:{session}}=await supabase.auth.getSession();await setAuthUI(session?.user||null);
 supabase.auth.onAuthStateChange((_event,session)=>setAuthUI(session?.user||null));
 </script>
