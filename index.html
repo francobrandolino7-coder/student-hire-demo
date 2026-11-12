@@ -382,7 +382,36 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
     if(window.studentHireSupabase){
       try{const {data:{user}}=await window.studentHireSupabase.auth.getUser();if(user){const existing=user.user_metadata?.student_hire_agent_queue||[];const next=existing.filter(x=>x.jobId!==request.jobId);next.push(request);await window.studentHireSupabase.auth.updateUser({data:{student_hire_agent_queue:next}})}}catch(e){}
     }
-    if(status)status.textContent="Approved and queued. The review/consent step is working. Live browser submission will activate when the server-side TinyFish Agent API key is connected.";
+    if(status)status.textContent="Starting Student Hire Agent…";
+    try{
+      const packet=document.getElementById("applyPacket")?.textContent||"";
+      const {data:{session}}=await window.studentHireSupabase.auth.getSession();
+      if(!session?.access_token)throw new Error("Please sign in again before applying.");
+      const response=await fetch("https://student-hire-agent.onrender.com/api/apply",{
+        method:"POST",
+        headers:{"content-type":"application/json","authorization":"Bearer "+session.access_token},
+        body:JSON.stringify({approved:true,sourceUrl:pendingAgentJob.sourceUrl,packet})
+      });
+      const data=await response.json().catch(()=>({}));
+      if(response.status===503){
+        if(status)status.textContent="Application approved and safely queued. The browser-agent backend is ready; the TinyFish API credential still needs to be connected before live submission can run.";
+        return;
+      }
+      if(!response.ok)throw new Error(data.message||data.error||"Agent request failed.");
+      const resultText=JSON.stringify(data.result||data);
+      if(/SUBMITTED/i.test(resultText)){
+        if(status)status.textContent="Submitted successfully. The application tracker has been updated.";
+        const existing=saved.find(x=>x.id===pendingAgentJob.id);
+        if(existing)existing.status="Applied";else saved.push({id:pendingAgentJob.id,title:pendingAgentJob.title,company:pendingAgentJob.company,score:pendingAgentJob.score,status:"Applied"});
+        localStorage.setItem("studentHireApplications",JSON.stringify(saved));renderTracker();
+      }else if(/NEEDS_INPUT/i.test(resultText)){
+        if(status)status.textContent="The agent stopped before submission because the employer requires information that is not in your profile. Review the agent result before continuing.";
+      }else{
+        if(status)status.textContent="Agent run completed. Review the returned result before assuming the application was submitted.";
+      }
+    }catch(e){
+      if(status)status.textContent=e?.message||"Could not start the application agent.";
+    }
   };
   recalc();
   renderTracker();
