@@ -80,7 +80,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 <div class="field"><label>Name</label><input id="pName" placeholder="Your name"></div>
 <div class="field"><label>School / college / university</label><input id="pSchool" placeholder="Where do you study?"></div>
 <div class="field"><label>Program / major</label><input id="pProgram" placeholder="What are you studying?"></div>
-<div class="field"><label>Current location</label><input id="pLocation" placeholder="City or neighbourhood"></div>
+<div class="field"><label>Current location</label><input id="pLocation" placeholder="City or neighbourhood"></div><div class="field"><label>Phone number <span class="small">(optional)</span></label><input id="pPhone" type="tel" autocomplete="tel" placeholder="e.g. 416-555-0123"></div>
 <div class="field full"><label>Tell us about yourself</label><textarea id="pAbout" placeholder="What are you good at? What do you enjoy? What experience, projects, volunteering or responsibilities are you proud of?"></textarea></div>
 <div class="field full"><label>Skills you want employers to know about</label><input id="pSkills" placeholder="e.g. Excel, customer service, social media, coding, design"></div>
 </div>
@@ -251,7 +251,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
   function saveProfile(){
     profile={
       ...profile,
-      name:val("pName").trim(),school:val("pSchool").trim(),program:val("pProgram").trim(),location:val("pLocation").trim(),
+      name:val("pName").trim(),school:val("pSchool").trim(),program:val("pProgram").trim(),location:val("pLocation").trim(),phone:val("pPhone").trim(),
       about:val("pAbout").trim(),skills:val("pSkills").trim(),
       future:val("pFuture").trim(),shortGoals:val("pShortGoals").trim(),
       pay:Number(val("pPay",0)),monthlyGoal:Number(val("pMonthlyGoal",0)),financialWhy:val("pFinancialWhy").trim(),
@@ -273,7 +273,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
   window.saveProfile=saveProfile;
 
   Object.entries(profile).forEach(([k,v])=>{
-    const map={name:"pName",school:"pSchool",program:"pProgram",location:"pLocation",about:"pAbout",skills:"pSkills",future:"pFuture",shortGoals:"pShortGoals",pay:"pPay",monthlyGoal:"pMonthlyGoal",financialWhy:"pFinancialWhy",minHours:"pMinHours",maxHours:"pMaxHours",commute:"pCommute",threshold:"pThreshold",availability:"pAvailability",exams:"pExams",workMode:"pWorkMode"};
+    const map={name:"pName",school:"pSchool",program:"pProgram",location:"pLocation",phone:"pPhone",about:"pAbout",skills:"pSkills",future:"pFuture",shortGoals:"pShortGoals",pay:"pPay",monthlyGoal:"pMonthlyGoal",financialWhy:"pFinancialWhy",minHours:"pMinHours",maxHours:"pMaxHours",commute:"pCommute",threshold:"pThreshold",availability:"pAvailability",exams:"pExams",workMode:"pWorkMode"};
     if(map[k])setVal(map[k],v);
   });
   const rs=document.getElementById("resumeStatus"); if(rs&&profile.resumeName)rs.textContent="Resume on profile: "+profile.resumeName+" (re-upload if you want to replace it).";
@@ -354,6 +354,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
       "Candidate: "+(p.name||""),
       "School / program: "+[p.school,p.program].filter(Boolean).join(" — "),
       "Location: "+(p.location||""),
+      ...(p.phone ? ["Phone: "+p.phone] : []),
       "Resume on profile: "+(p.resumeName||""),
       "Skills: "+(p.skills||""),
       "About: "+(p.about||""),
