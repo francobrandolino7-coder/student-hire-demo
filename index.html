@@ -21,7 +21,7 @@ const P={name:"",school:"Toronto Metropolitan University",program:"Business Mana
 try{Object.assign(P,JSON.parse(localStorage.getItem("shp")||"{}"))}catch{}
 let apps=[];try{apps=JSON.parse(localStorage.getItem("sha")||"[]")}catch{}
 let tab="Matches",selected=jobs[0],tool="Should I Apply?";
-const tabs=["Matches","Profile","AI Coach","Applications","Feedback","Why Student Hire"];
+const tabs=["Matches","Profile","AI Coach","Applications","Feedback","Why Student Hire"];\nconst tabsEl=document.getElementById("tabs");\nconst app=document.getElementById("app");
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 function nav(){tabsEl.innerHTML=tabs.map(x=>`<button class="tab ${x===tab?"on":""}" onclick="go('${x}')">${x}</button>`).join("")}
 function go(x){tab=x;render()}
