@@ -9,7 +9,7 @@ const ALLOWED_ORIGIN=process.env.ALLOWED_ORIGIN||"https://student-hire-app.onren
 function send(res,status,data){
   res.writeHead(status,{
     "content-type":"application/json; charset=utf-8",
-    "access-control-allow-origin":ALLOWED_ORIGIN,
+    "access-control-allow-origin":"*",
     "access-control-allow-headers":"authorization,content-type",
     "access-control-allow-methods":"GET,POST,OPTIONS"
   });
@@ -33,8 +33,6 @@ const server=http.createServer(async(req,res)=>{
   if(req.url==="/health")return send(res,200,{ok:true,agentConfigured:Boolean(TINYFISH_API_KEY)});
   try{
     if(req.method==="GET" && req.url?.startsWith("/api/jobs")){
-      const user=await authenticatedUser(req);
-      if(!user)return send(res,401,{error:"unauthorized"});
       const u=new URL(req.url,"https://student-hire-agent.onrender.com");
       const q=(u.searchParams.get("q")||"").trim().slice(0,120);
       const location=(u.searchParams.get("location")||"").trim().slice(0,120);
@@ -44,43 +42,44 @@ const server=http.createServer(async(req,res)=>{
       if(location)searchUrl.searchParams.set("locationstring",location);
       searchUrl.searchParams.set("sort","M");
 
-      const searchResp=await fetch(searchUrl,{headers:{"user-agent":"Mozilla/5.0 StudentHireBeta/1.0"}});
+      const headers={"user-agent":"Mozilla/5.0 StudentHireBeta/1.0","accept-language":"en-CA,en;q=0.9"};
+      const searchResp=await fetch(searchUrl,{headers});
       if(!searchResp.ok)return send(res,502,{error:"job_source_unavailable"});
       const searchHtml=await searchResp.text();
-      const decoded=searchHtml.replace(/&amp;/g,"&");
-      const rssMatch=decoded.match(/https:\/\/www\.jobbank\.gc\.ca\/jobsearch\/feed\/jobSearchRSSfeed[^"'<>\s]*/i) ||
-        decoded.match(/\/jobsearch\/feed\/jobSearchRSSfeed[^"'<>\s]*/i);
-      let feedUrl;
-      if(rssMatch){
-        feedUrl=rssMatch[0].startsWith("http")?rssMatch[0]:"https://www.jobbank.gc.ca"+rssMatch[0];
-      }else{
-        feedUrl="https://www.jobbank.gc.ca/jobsearch/feed/jobSearchRSSfeed?term="+encodeURIComponent(q)+"&sort=D&rows=50";
-      }
-      const feedResp=await fetch(feedUrl,{headers:{"user-agent":"Mozilla/5.0 StudentHireBeta/1.0"}});
-      if(!feedResp.ok)return send(res,502,{error:"job_feed_unavailable"});
-      const xml=await feedResp.text();
-      const entries=[...xml.matchAll(/<entry[\s\S]*?<\/entry>/gi)].map(m=>m[0]);
-      const items=[];
-      const strip=x=>String(x||"").replace(/<!\[CDATA\[|\]\]>/g,"").replace(/<[^>]+>/g," ").replace(/&amp;/g,"&").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim();
-      const pick=(block,re)=>{const m=block.match(re);return m?strip(m[1]):""};
-      for(const block of entries.slice(0,40)){
-        const title=pick(block,/<title[^>]*>([\s\S]*?)<\/title>/i);
-        const updated=pick(block,/<updated[^>]*>([\s\S]*?)<\/updated>/i);
-        const summaryRaw=(block.match(/<(?:summary|content)[^>]*>([\s\S]*?)<\/(?:summary|content)>/i)||[])[1]||"";
-        const summary=strip(summaryRaw);
-        const href=(block.match(/<link[^>]+href=["']([^"']+)["']/i)||[])[1]||"";
-        const jobNo=(summary.match(/Job number:\s*([^\s<]+)/i)||[])[1]||"";
-        const employer=(summary.match(/Employer:\s*(.*?)(?:Salary:|$)/i)||[])[1]?.trim()||"";
-        const salary=(summary.match(/Salary:\s*(.*)$/i)||[])[1]?.trim()||"";
-        const loc=(summary.match(/Location:\s*(.*?)(?:Employer:|$)/i)||[])[1]?.trim()||"";
-        const finalUrl=jobNo?("https://www.jobbank.gc.ca/jobsearch/jobposting/"+encodeURIComponent(jobNo)+"?source=searchresults"):href;
-        if(title&&finalUrl)items.push({id:jobNo||finalUrl,title,employer,location:loc,salary,postedAt:updated,url:finalUrl,source:"Job Bank"});
-      }
-      if(!items.length){
-        const ids=[...decoded.matchAll(/jobposting\/(\d+)/g)].map(m=>m[1]).filter((v,i,a)=>a.indexOf(v)===i).slice(0,20);
-        for(const id of ids)items.push({id,title:"Job Bank listing",employer:"",location:location||"",salary:"",postedAt:"",url:"https://www.jobbank.gc.ca/jobsearch/jobposting/"+id+"?source=searchresults",source:"Job Bank"});
-      }
-      return send(res,200,{query:q,location,results:items.slice(0,20),sourceUrl:String(searchUrl)});
+
+      const ids=[...searchHtml.matchAll(/jobposting\/(\d+)/gi)]
+        .map(m=>m[1]).filter((v,i,a)=>a.indexOf(v)===i).slice(0,12);
+      if(!ids.length)return send(res,200,{query:q,location,results:[],sourceUrl:String(searchUrl)});
+
+      const strip=x=>String(x||"")
+        .replace(/<script[\s\S]*?<\/script>/gi," ")
+        .replace(/<style[\s\S]*?<\/style>/gi," ")
+        .replace(/<[^>]+>/g," ")
+        .replace(/&amp;/g,"&").replace(/&nbsp;/g," ")
+        .replace(/&#39;/g,"'").replace(/&quot;/g,'"')
+        .replace(/\s+/g," ").trim();
+
+      const details=await Promise.all(ids.map(async id=>{
+        const url="https://www.jobbank.gc.ca/jobsearch/jobposting/"+id+"?source=searchresults";
+        try{
+          const r=await fetch(url,{headers}); if(!r.ok)return null;
+          const h=await r.text();
+          const title=strip((h.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)||[])[1]||"");
+          const employer=strip((h.match(/Employer details[\s\S]{0,900}?<strong[^>]*>([\s\S]*?)<\/strong>/i)||[])[1]||"");
+          const locationText=strip((h.match(/<li[^>]*>[\s\S]{0,100}?Location[\s\S]*?<\/li>/i)||[])[0]||"").replace(/^Location\s*/i,"");
+          let salary=strip((h.match(/<li[^>]*>[\s\S]{0,100}?Salary[\s\S]*?<\/li>/i)||[])[0]||"").replace(/^Salary\s*/i,"");
+          if(!salary){
+            const sm=strip(h).match(/Salary\s*(\$[^\n]{0,120}?)(?:Terms of employment|Starts|vacancy|Source)/i);
+            salary=sm?sm[1].trim():"";
+          }
+          const jobNo=(strip(h).match(/Job Bank\s*#([0-9]+)/i)||[])[1]||"";
+          const posted=(strip(h).match(/Posted on\s*([A-Za-z]+\s+\d{1,2},\s+\d{4})/i)||[])[1]||"";
+          if(!title)return null;
+          return {id,jobNumber:jobNo,title,employer,location:locationText,salary,postedAt:posted,url,source:"Job Bank"};
+        }catch{return null}
+      }));
+      const results=details.filter(Boolean);
+      return send(res,200,{query:q,location,results,sourceUrl:String(searchUrl)});
     }
     if(req.method!=="POST"||req.url!=="/api/apply")return send(res,404,{error:"not_found"});
     const user=await authenticatedUser(req);
