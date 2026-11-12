@@ -614,12 +614,11 @@ window.searchLiveJobs=async function(){
   const q=document.getElementById("jobQuery")?.value.trim(), location=document.getElementById("jobLocation")?.value.trim();
   const msg=document.getElementById("jobSearchMsg"), box=document.getElementById("liveResults");
   if(!q){if(msg)msg.textContent="Enter a job title or keyword first.";return}
-  setAuthMode("create");
-const {data:{session}}=await supabase.auth.getSession();if(!session?.access_token){if(msg)msg.textContent="Sign in to search current jobs.";return}
+  if(!window.studentHireUser){if(msg)msg.textContent="Sign in to search current jobs.";return}
   if(msg)msg.textContent="Searching current Job Bank listings…";if(box)box.innerHTML="";
   try{
     const u=new URL("https://student-hire-agent.onrender.com/api/jobs");u.searchParams.set("q",q);if(location)u.searchParams.set("location",location);
-    const r=await fetch(u,{headers:{authorization:"Bearer "+session.access_token}});
+    const r=await fetch(u);
     const data=await r.json();if(!r.ok)throw new Error(data.error||"Search failed.");
     window.liveSearchJobs=(data.results||[]).map((j,i)=>({...j,localId:"live-"+i,score:profileFit(j)}));
     if(!window.liveSearchJobs.length){if(msg)msg.textContent="No current results returned. Try a broader keyword or nearby location.";return}
@@ -639,6 +638,7 @@ window.openLiveApplyAgent=function(index){
   if(!profileReady(localProfile())){document.getElementById("profile")?.scrollIntoView({behavior:"smooth"});return}
   window.dispatchEvent(new CustomEvent("studenthire-open-live-apply",{detail:j}));
 };
+setAuthMode("create");
 const {data:{session}}=await supabase.auth.getSession();await setAuthUI(session?.user||null);
 supabase.auth.onAuthStateChange((_event,session)=>setAuthUI(session?.user||null));
 </script>
