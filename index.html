@@ -16,6 +16,8 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 
 .btn2{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 12px;border-radius:10px;font-weight:800;cursor:pointer}.btn2.primary{background:linear-gradient(100deg,var(--green),var(--blue));color:#051828;border:0}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:5px}.field label{font-size:12px;color:var(--muted);font-weight:800}.field input,.field textarea,.field select{width:100%;background:#081526;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px}.field textarea{min-height:90px}.full{grid-column:1/-1}.appTable{width:100%;border-collapse:collapse}.appTable th,.appTable td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.appTable select{background:#081526;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px}.aiBox{white-space:pre-wrap;background:#081526;border:1px solid var(--line);padding:14px;border-radius:12px;min-height:170px;color:#d8e2ed;line-height:1.55}.success{color:var(--green);font-size:13px}.empty{padding:20px;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}
 @media(max-width:620px){.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.appTable{display:block;overflow:auto}}
+
+.authbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.authbar input{min-width:220px;background:#081526;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px}.locked{padding:22px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);text-align:center}.source{font-size:11px;color:var(--muted);margin-top:8px}.job a.apply{display:inline-block;margin-top:10px}
 </style>
 </head>
 <body>
@@ -23,23 +25,30 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 <main>
 <section class="hero"><div class="wrap"><div class="eyebrow">Student-first job matching</div><h1>Jobs that fit your <span class="grad">student life.</span></h1><p class="lead">Start with your resume, then tell Student Hire who you are, where you want to go, what you want to achieve next, and what you need financially. Your matches are built from your real goals and constraints.</p><a class="cta" href="#profile">Build your profile</a><div class="grid3"><div class="card"><strong>Schedule-aware</strong><p>Class times, availability and exams directly affect fit.</p></div><div class="card"><strong>Explainable scores</strong><p>Students can see what helped or hurt every recommendation.</p></div><div class="card"><strong>High-signal alerts</strong><p>Only jobs above a chosen threshold should trigger notifications.</p></div></div></div></section>
 
-<section class="section" id="matches"><div class="wrap"><h2>Your matches</h2><p class="sub" id="matchIntro">Complete your profile first. Student Hire will calculate fit using your resume, goals, schedule, skills, location, hours and financial targets.</p><div class="matchgrid"><div class="jobs">
-<div class="card job"><div class="top"><div><h3>Social Media Assistant</h3><div class="small">Northline Coffee Co. · Downtown Toronto</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$20–23/hr</span><span class="pill">10–15 hrs/wk</span><span class="pill">Hybrid</span></div><div class="good">Complete your profile to see why this role fits you.</div><div class="warn">Your personalized gaps will appear here.</div></div>
-<div class="card job"><div class="top"><div><h3>Campus Brand Ambassador</h3><div class="small">Loop Mobile · Toronto campuses</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$19/hr</span><span class="pill">8–12 hrs/wk</span><span class="pill">In-person</span></div><div class="good">Complete your profile to see why this role fits you.</div><div class="warn">Your personalized gaps will appear here.</div></div>
-<div class="card job"><div class="top"><div><h3>Operations Assistant</h3><div class="small">Metro Market Labs · Toronto</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$21/hr</span><span class="pill">12–20 hrs/wk</span><span class="pill">Hybrid</span></div><div class="good">Complete your profile to see why this role fits you.</div><div class="warn">Your personalized gaps will appear here.</div></div>
-<div class="card job"><div class="top"><div><h3>Event Staff & Guest Services</h3><div class="small">Union Hall Events · Mississauga</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$18/hr</span><span class="pill">6–12 hrs/wk</span><span class="pill">In-person</span></div><div class="good">Complete your profile to see why this role fits you.</div><div class="warn">Your personalized gaps will appear here.</div></div>
+<section class="section" id="matches"><div class="wrap"><h2>Your live job matches</h2>
+<p class="sub" id="matchIntro">Complete your profile and create a Student Hire account to unlock current job listings.</p>
+<div id="authGate" class="locked">Your personalized live listings will appear here after you create or sign in to your Student Hire account.</div>
+<div id="jobsContent" style="display:none">
+<div class="matchgrid"><div class="jobs">
+<div class="card job"><div class="top"><div><h3>Marketing Assistant — Internship</h3><div class="small">Laserglow Technologies · North York, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$20/hr</span><span class="pill">Internship</span><span class="pill">On site</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3712067 · posted Nov 4, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?fss=1&mid=22437&page=1&sort=M">View & apply</a></div>
+
+<div class="card job"><div class="top"><div><h3>Sales Associate — Retail</h3><div class="small">Roots · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95–$26/hr</span><span class="pill">Retail</span><span class="pill">CareerBeacon</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">CareerBeacon #4056426 · posted Nov 11, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://on.jobbank.gc.ca/jobsearch/jobsearch?d=10&fn21=64100&mid=22437&sort=D%23results-list-content">View & apply</a></div>
+
+<div class="card job"><div class="top"><div><h3>Customer Service Representative — Call Centre</h3><div class="small">LCBO · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$20.82/hr</span><span class="pill">Customer service</span><span class="pill">CareerBeacon</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">CareerBeacon #3906270 · posted Nov 6, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.cb.guichetemplois.gc.ca/jobsearch/jobsearch?empl=LCBO&page=1&sort=D">View & apply</a></div>
+
+<div class="card job"><div class="top"><div><h3>Client Service Clerk</h3><div class="small">BMO Financial · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95–$31/hr</span><span class="pill">Client service</span><span class="pill">CareerBeacon</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">CareerBeacon #4014492 · posted Nov 1, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?empl=BMO+Financial&page=1&sort=D">View & apply</a></div>
+
+<div class="card job"><div class="top"><div><h3>Sales Associate</h3><div class="small">Chow Tai Fook · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$18–$25/hr</span><span class="pill">On site</span><span class="pill">Direct Apply</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3709343 · posted Oct 31, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?fn21=64100&mid=22437">View & apply</a></div>
+
+<div class="card job"><div class="top"><div><h3>Retail Sales Associate</h3><div class="small">EB Games Canada · Toronto, ON</div></div><div class="score">—</div></div><div class="meta"><span class="pill">$17.95/hr</span><span class="pill">On site</span><span class="pill">Retail</span></div><div class="good">Complete your profile to calculate fit.</div><div class="warn">Personalized gaps will appear here.</div><div class="source">Job Bank #3704376 · posted Oct 26, 2026 · checked Nov 12, 2026</div><a class="btn2 primary apply" target="_blank" rel="noopener" href="https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring=EB+Games+online+store">View & apply</a></div>
 </div>
-<aside class="card side" id="fitPanel">
-<div class="tag">FIT BREAKDOWN</div>
-<h3>Complete your profile</h3>
-<div class="score" id="sideScore" style="margin:10px 0 16px">—</div>
-<p class="small" id="sideSummary">Upload your resume and tell us about your goals. Student Hire will then show the factors behind each match.</p>
+<aside class="card side" id="fitPanel"><div class="tag">FIT BREAKDOWN</div><h3>Personalized match</h3><div class="score" id="sideScore" style="margin:10px 0 16px">—</div><p class="small" id="sideSummary">Your profile and account unlock personalized fit scores for current listings.</p>
 <div class="factor"><div class="row"><span>Resume & skills</span><span id="fSkills">—</span></div><div class="bar"><div class="fill" id="bSkills" style="width:0%"></div></div></div>
 <div class="factor"><div class="row"><span>Career direction</span><span id="fCareer">—</span></div><div class="bar"><div class="fill" id="bCareer" style="width:0%"></div></div></div>
 <div class="factor"><div class="row"><span>Schedule & hours</span><span id="fSchedule">—</span></div><div class="bar"><div class="fill" id="bSchedule" style="width:0%"></div></div></div>
 <div class="factor"><div class="row"><span>Financial fit</span><span id="fFinancial">—</span></div><div class="bar"><div class="fill" id="bFinancial" style="width:0%"></div></div></div>
-<p class="small">Protected traits are not used in ranking.</p>
-</aside></div></div></section>
+<p class="small">Listings are current public postings and can expire. Always verify details on the employer/source page.</p></aside>
+</div></div></div></section>
 
 <section class="section" id="profile"><div class="wrap">
 <div class="eyebrow">Start here</div><h2>Create your Student Hire profile</h2>
@@ -83,7 +92,17 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 <div class="field full"><label>Exam / blackout periods</label><input id="pExams" placeholder="Dates or periods when you do not want work shifts"></div>
 <div class="field full"><label>Preferred work setup</label><select id="pWorkMode"><option value="">Choose one</option><option>Remote</option><option>Hybrid</option><option>In-person</option><option>No preference</option></select></div>
 </div>
-<div class="controls"><button class="btn2 primary" onclick="saveProfile()">Build my matches</button><span id="profileMsg" class="success"></span></div>
+<div class="controls"><button class="btn2 primary" onclick="saveProfile()">Continue to account</button><span id="profileMsg" class="success"></span></div>
+</div></div></section>
+
+<section class="section" id="account"><div class="wrap"><div class="eyebrow">Step 2</div><h2>Create your Student Hire account</h2>
+<p class="sub">Your account unlocks live job listings and lets your profile follow you when you sign back in. Your actual resume file is not uploaded to the cloud yet.</p>
+<div class="card">
+<div id="signedOutAccount">
+<div class="authbar"><input id="authEmail" type="email" autocomplete="email" placeholder="Email address"><input id="authPassword" type="password" autocomplete="new-password" placeholder="Password (8+ characters)"><button class="btn2 primary" onclick="createAccount()">Create account</button><button class="btn2" onclick="signInAccount()">Sign in</button></div>
+<div id="authMsg" class="success" style="margin-top:10px"></div>
+</div>
+<div id="signedInAccount" style="display:none"><div class="row"><div><strong id="accountEmail"></strong><div class="small">Student Hire account active</div></div><button class="btn2" onclick="signOutAccount()">Sign out</button></div><div id="cloudSaveMsg" class="success" style="margin-top:10px"></div></div>
 </div></div></section>
 
 <section class="section" id="ai"><div class="wrap"><h2>AI Career Copilot</h2><p class="sub">This beta uses deterministic demo coaching. A live AI model can plug into the same workflow server-side later.</p><div class="two"><div class="card"><div class="field"><label>Selected job</label><input id="aiJob" placeholder="Choose a job from Matches or type a role"></div><div class="field" style="margin-top:10px"><label>Tool</label><select id="aiTool"><option>Should I Apply?</option><option>Resume Review</option><option>Interview Prep</option><option>Tailored Cover Letter</option><option>Skill-Gap Plan</option><option>Application Answers</option><option>Networking Message</option><option>Study/Work Compatibility</option><option>Scam/Risk Check</option></select></div><div class="controls"><button class="btn2 primary" onclick="runAI()">Run career tool</button></div></div><div class="card"><div id="aiOutput" class="aiBox">Choose a tool and run it for the selected job.</div><p class="small">The assistant should never invent experience, credentials, employer facts or skills you do not have.</p></div></div></div></section>
@@ -101,10 +120,12 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 <script>
 (function(){
   const jobs=[
-    {id:1,title:"Social Media Assistant",company:"Northline Coffee Co.",pay:20,hours:15,base:96,keywords:["social media","communication","marketing"]},
-    {id:2,title:"Campus Brand Ambassador",company:"Loop Mobile",pay:19,hours:12,base:92,keywords:["communication","social media","marketing"]},
-    {id:3,title:"Operations Assistant",company:"Metro Market Labs",pay:21,hours:20,base:86,keywords:["excel","operations","customer service"]},
-    {id:4,title:"Event Staff & Guest Services",company:"Union Hall Events",pay:18,hours:12,base:69,keywords:["customer service","events","communication"]}
+    {id:1,title:"Marketing Assistant — Internship",company:"Laserglow Technologies",pay:20,hours:null,base:70,keywords:["marketing","social media","communication","design"]},
+    {id:2,title:"Sales Associate — Retail",company:"Roots",pay:17.95,hours:null,base:65,keywords:["retail","customer service","sales","communication"]},
+    {id:3,title:"Customer Service Representative — Call Centre",company:"LCBO",pay:20.82,hours:null,base:68,keywords:["customer service","communication","service"]},
+    {id:4,title:"Client Service Clerk",company:"BMO Financial",pay:17.95,hours:null,base:69,keywords:["finance","client service","customer service","communication"]},
+    {id:5,title:"Sales Associate",company:"Chow Tai Fook",pay:18,hours:null,base:65,keywords:["sales","retail","customer service","communication"]},
+    {id:6,title:"Retail Sales Associate",company:"EB Games Canada",pay:17.95,hours:null,base:64,keywords:["retail","sales","customer service","gaming"]}
   ];
   const scoreEls=[...document.querySelectorAll(".job .score")];
   const jobCards=[...document.querySelectorAll(".job")];
@@ -134,16 +155,20 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
     const maxHours=Number(profile.maxHours||0);
     const minHours=Number(profile.minHours||0);
     if(j.pay>=minPay) s+=10; else s-=Math.min(15,(minPay-j.pay)*4);
-    if(j.hours<=maxHours && j.hours>=Math.max(0,minHours-3)) s+=10; else s-=8;
+    if(j.hours===null){s+=3;} else if(j.hours<=maxHours && j.hours>=Math.max(0,minHours-3)) s+=10; else s-=8;
     if(normalize(profile.availability).includes("weekend") && (j.id===1||j.id===2||j.id===4)) s+=4;
     return Math.max(55,Math.min(98,Math.round(s)));
   }
   function recalc(){
     const complete=isProfileComplete();
+    const authed=Boolean(window.studentHireUser);
     const intro=document.getElementById("matchIntro");
     if(intro) intro.textContent=complete
-      ? "Matches are now calculated from your resume, goals, schedule, skills and financial targets."
+      ? (authed ? "Current listings are unlocked. Match scores use your resume/profile, goals, schedule and financial targets." : "Your profile is ready. Create or sign in to your Student Hire account to unlock current listings.")
       : "Complete your profile first. Student Hire will calculate fit using your resume, goals, schedule, skills, location, hours and financial targets.";
+    const gate=document.getElementById("authGate"), content=document.getElementById("jobsContent");
+    if(gate)gate.style.display=(complete&&authed)?"none":"block";
+    if(content)content.style.display=(complete&&authed)?"block":"none";
     jobs.forEach((j,i)=>{
       const s=scoreForJob(j); j.score=s;
       if(scoreEls[i]) scoreEls[i].textContent=s===null?"—":s+"%";
@@ -165,6 +190,8 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
     });
     updateSidePanel();
   }
+  window.recalc=recalc;
+  window.addEventListener("studenthire-auth-change",()=>recalc());
   function updateSidePanel(){
     const complete=isProfileComplete();
     const s=complete?jobs[0].score:null;
@@ -216,8 +243,9 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
     if(!profile.about||!profile.future||!profile.shortGoals||!profile.pay||!profile.monthlyGoal||!profile.availability||!profile.maxHours){
       if(m)m.textContent="Add the required story, goals, financial target and schedule fields to calculate fit.";return
     }
-    if(m)m.textContent="Profile saved. Your match scores are now personalized.";
-    document.getElementById("matches")?.scrollIntoView({behavior:"smooth"});
+    if(m)m.textContent="Profile saved. Create or sign in to your account to unlock live jobs.";
+    if(window.persistProfileToAccount) window.persistProfileToAccount(profile);
+    document.getElementById("account")?.scrollIntoView({behavior:"smooth"});
   }
   window.saveProfile=saveProfile;
 
@@ -229,6 +257,7 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
   function saveJob(job){
     if(!saved.some(x=>x.id===job.id)) saved.push({id:job.id,title:job.title,company:job.company,score:job.score===null?"Not scored":job.score,status:"Saved"});
     localStorage.setItem("studentHireApplications",JSON.stringify(saved));
+    if(window.persistAppsToAccount) window.persistAppsToAccount(saved);
     renderTracker();
   }
   window.saveJobById=function(id){const j=jobs.find(x=>x.id===id);if(j)saveJob(j)}
@@ -245,7 +274,7 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
       ["Saved","Applied","Interview","Offer","Rejected","Withdrawn"].map(s=>'<option'+(s===x.status?' selected':'')+'>'+s+'</option>').join("")+
       '</select></td><td><button class="btn2" onclick="removeSaved('+x.id+')">Remove</button></td></tr>').join("")+'</tbody></table>';
   }
-  window.updateStatus=function(id,status){const x=saved.find(v=>v.id===id);if(x)x.status=status;localStorage.setItem("studentHireApplications",JSON.stringify(saved))}
+  window.updateStatus=function(id,status){const x=saved.find(v=>v.id===id);if(x)x.status=status;localStorage.setItem("studentHireApplications",JSON.stringify(saved));if(window.persistAppsToAccount)window.persistAppsToAccount(saved)}
   window.removeSaved=function(id){saved=saved.filter(x=>x.id!==id);localStorage.setItem("studentHireApplications",JSON.stringify(saved));renderTracker()}
 
   jobCards.forEach((card,i)=>{
@@ -257,6 +286,7 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
 
   window.runAI=function(){
     const title=val("aiJob","Selected role"); const tool=val("aiTool","Should I Apply?");
+    if(!window.studentHireUser){const out=document.getElementById("aiOutput");if(out)out.textContent="Create or sign in to your Student Hire account to use Career Copilot with your profile.";return;}
     if(!isProfileComplete()){const out=document.getElementById("aiOutput");if(out)out.textContent="Complete your resume-first profile and goals before using the Career Copilot. The advice should be based on you, not a generic persona.";return;}
     const j=jobs.find(x=>x.title===title)||jobs[0];
     const availability=profile.availability||"your stated availability";
@@ -287,5 +317,54 @@ a{color:inherit;text-decoration:none}.wrap{max-width:1160px;margin:auto;padding:
   recalc();
   renderTracker();
 })();
+</script>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const supabase=createClient("https://c--f2684d00-06a0-47e6-a2f2-d3623ae08849-prod.lovable.cloud","sb_publishable_R4K_XQE20WIevzostvW6Tw_s7OiRdPZ",{auth:{persistSession:true,autoRefreshToken:true}});
+window.studentHireSupabase=supabase;
+function localProfile(){try{return JSON.parse(localStorage.getItem("studentHireProfile")||"{}")}catch{return {}}}
+function localApps(){try{return JSON.parse(localStorage.getItem("studentHireApplications")||"[]")}catch{return []}}
+function profileReady(p){return Boolean(p.resumeName&&p.about&&p.future&&p.shortGoals&&Number(p.pay)>0&&Number(p.monthlyGoal)>0&&p.availability&&Number(p.maxHours)>0)}
+async function setAuthUI(user){
+  window.studentHireUser=user||null;
+  const out=document.getElementById("signedOutAccount"), inn=document.getElementById("signedInAccount");
+  if(out)out.style.display=user?"none":"block"; if(inn)inn.style.display=user?"block":"none";
+  if(user){const e=document.getElementById("accountEmail");if(e)e.textContent=user.email||"Signed in";
+    const cloud=user.user_metadata?.student_hire_profile;
+    if(cloud&&Object.keys(cloud).length){localStorage.setItem("studentHireProfile",JSON.stringify({...cloud,resumeName:cloud.resumeName||localProfile().resumeName}));}
+    const apps=user.user_metadata?.student_hire_apps;
+    if(Array.isArray(apps))localStorage.setItem("studentHireApplications",JSON.stringify(apps));
+  }
+  if(window.recalc)window.recalc();
+  else window.dispatchEvent(new Event("studenthire-auth-change"));
+}
+window.persistProfileToAccount=async p=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;
+  const safe={...p};delete safe.resumeText;
+  const {error}=await supabase.auth.updateUser({data:{student_hire_profile:safe}});
+  const el=document.getElementById("cloudSaveMsg");if(el)el.textContent=error?"Profile saved locally; cloud sync failed.":"Profile synced to your Student Hire account.";
+};
+window.persistAppsToAccount=async apps=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;await supabase.auth.updateUser({data:{student_hire_apps:apps}})};
+window.createAccount=async()=>{
+  const p=localProfile(), msg=document.getElementById("authMsg");
+  if(!profileReady(p)){if(msg)msg.textContent="Finish your resume-first profile before creating an account.";return}
+  const email=document.getElementById("authEmail").value.trim(), password=document.getElementById("authPassword").value;
+  if(!email||password.length<8){if(msg)msg.textContent="Enter a valid email and a password with at least 8 characters.";return}
+  const safe={...p};delete safe.resumeText;
+  const {data,error}=await supabase.auth.signUp({email,password,options:{data:{student_hire_profile:safe,student_hire_apps:localApps()}}});
+  if(error){if(msg)msg.textContent=error.message;return}
+  if(data.session){if(msg)msg.textContent="Account created. Live jobs unlocked.";await setAuthUI(data.user);document.getElementById("matches")?.scrollIntoView({behavior:"smooth"});}
+  else {if(msg)msg.textContent="Account created. Check your email to confirm, then sign in here."}
+};
+window.signInAccount=async()=>{
+  const email=document.getElementById("authEmail").value.trim(), password=document.getElementById("authPassword").value, msg=document.getElementById("authMsg");
+  const {data,error}=await supabase.auth.signInWithPassword({email,password});
+  if(error){if(msg)msg.textContent=error.message;return}
+  if(msg)msg.textContent="Signed in. Live jobs unlocked.";await setAuthUI(data.user);
+  const p=localProfile();if(window.persistProfileToAccount&&profileReady(p))await window.persistProfileToAccount(p);
+  location.reload();
+};
+window.signOutAccount=async()=>{await supabase.auth.signOut();window.studentHireUser=null;location.reload()};
+const {data:{session}}=await supabase.auth.getSession();await setAuthUI(session?.user||null);
+supabase.auth.onAuthStateChange((_event,session)=>setAuthUI(session?.user||null));
 </script>
 </body></html>
