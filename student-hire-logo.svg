@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 180" role="img" aria-labelledby="title desc">
+<title id="title">Student Hire</title><desc id="desc">Graduation cap, briefcase, and upward arrow logo for Student Hire.</desc>
+<defs><linearGradient id="teal" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0f9f79"/><stop offset="1" stop-color="#2ac9b0"/></linearGradient></defs>
+<g transform="translate(12 12)">
+  <path d="M20 52 90 16l70 36-70 36-70-36Z" fill="#17324d"/>
+  <path d="M42 75v50c0 24 20 43 48 43s48-19 48-43V75l-48 24-48-24Z" fill="#17324d"/>
+  <path d="M25 61v48" stroke="#17324d" stroke-width="10" stroke-linecap="round"/><circle cx="25" cy="114" r="8" fill="#17324d"/>
+  <rect x="53" y="92" width="74" height="52" rx="8" fill="#fff"/>
+  <path d="M72 91v-7c0-8 6-14 14-14h8c8 0 14 6 14 14v7" fill="none" stroke="#17324d" stroke-width="7" stroke-linecap="round"/>
+  <path d="m54 108 36 18 36-18" fill="none" stroke="#17324d" stroke-width="6"/><rect x="84" y="120" width="13" height="14" rx="3" fill="#17324d"/>
+  <path d="M33 143c28 17 72 11 104-6 18-10 33-23 45-39" fill="none" stroke="url(#teal)" stroke-width="13" stroke-linecap="round"/>
+  <path d="m174 83 22 9-19 15" fill="url(#teal)"/>
+</g>
+<text x="225" y="108" font-family="Inter,Arial,sans-serif" font-size="76" font-weight="800" fill="#17324d">Student</text>
+<text x="560" y="108" font-family="Inter,Arial,sans-serif" font-size="76" font-weight="800" fill="#0f9f79">Hire</text>
+</svg>
