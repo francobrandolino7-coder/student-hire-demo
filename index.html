@@ -129,7 +129,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 </div></div></section>
 
 <section class="section" id="account"><div class="wrap"><div class="eyebrow">Step 2</div><h2>Create your Student Hire account</h2>
-<p class="sub">Your account unlocks live jobs, personalized matching, application tracking and the Student Hire application agent.</p>
+<p class="sub">Your account unlocks live jobs, personalized matching, application tracking and the Student Hire application agent. If email authentication is temporarily unavailable, beta access lets you continue on this device while cloud sync and automated submission stay safely disabled.</p>
 <div class="card accountCard">
 <div id="signedOutAccount">
 <div class="authTabs"><button id="tabCreate" class="authTab active" onclick="setAuthMode('create')">Create account</button><button id="tabSignIn" class="authTab" onclick="setAuthMode('signin')">Sign in</button></div>
@@ -138,11 +138,11 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 <div class="field"><label>Password</label><input id="authPassword" type="password" autocomplete="new-password" placeholder="At least 8 characters" minlength="8" required></div>
 <div class="field" id="confirmField"><label>Confirm password</label><input id="authPasswordConfirm" type="password" autocomplete="new-password" placeholder="Re-enter password" minlength="8" required></div>
 </div>
-<div class="controls" style="margin-top:14px"><button id="primaryAuthBtn" type="button" class="btn2 primary" onclick="submitAuth()">Create account</button><button class="btn2" type="button" onclick="togglePasswords()">Show passwords</button></div>
+<div class="controls" style="margin-top:14px"><button id="primaryAuthBtn" type="button" class="btn2 primary" onclick="submitAuth()">Create account</button><button class="btn2" type="button" onclick="togglePasswords()">Show passwords</button><button id="betaAccessBtn" class="btn2" type="button" onclick="continueBetaMode()">Continue in beta mode</button></div>
 <div id="authMsg" class="authStatus info" role="alert" aria-live="polite"></div>
 <div id="confirmNotice" class="accountNext" style="display:none"><strong>Check your inbox</strong><p class="small">We sent a confirmation link. Open it, then return here and sign in. The confirmation link will bring you back to Student Hire.</p><button class="btn2" onclick="setAuthMode('signin')">I confirmed my email — sign in</button></div>
 </div>
-<div id="signedInAccount" style="display:none"><div class="row" style="align-items:center"><div><div class="agentBadge">● Account active</div><h3 id="accountEmail" style="margin:8px 0 2px"></h3><div class="small">Your Student Hire profile is connected to this account.</div></div><button class="btn2" onclick="signOutAccount()">Sign out</button></div><div id="cloudSaveMsg" class="success" style="margin-top:10px"></div><div class="accountNext"><button class="btn2 primary" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">Open my dashboard</button></div></div>
+<div id="signedInAccount" style="display:none"><div class="row" style="align-items:center"><div><div id="accountBadge" class="agentBadge">● Account active</div><h3 id="accountEmail" style="margin:8px 0 2px"></h3><div id="accountCopy" class="small">Your Student Hire profile is connected to this account.</div></div><button class="btn2" onclick="signOutAccount()">Sign out</button></div><div id="cloudSaveMsg" class="success" style="margin-top:10px"></div><div class="accountNext"><button class="btn2 primary" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">Open my dashboard</button></div></div>
 </div></div></section>
 
 <section class="section" id="dashboard" data-account-only="true" style="display:none"><div class="wrap">
@@ -419,6 +419,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
   let pendingAgentJob=null;
   window.openApplyAgent=function(id){
     if(!window.studentHireUser){const status=document.getElementById("dashboardMatchStatus");if(status)status.textContent="Confirm your email and sign in before using the application agent.";document.getElementById("account")?.scrollIntoView({behavior:"smooth"});return}
+    if(window.studentHireBetaMode){const status=document.getElementById("dashboardMatchStatus");if(status)status.textContent="Beta access can use matching and tracking, but automated application submission requires a real cloud account once email authentication is restored.";return}
     if(!isProfileComplete()){document.getElementById("profile")?.scrollIntoView({behavior:"smooth"});return}
     const j=jobs.find(x=>x.id===id); if(!j)return; pendingAgentJob=j;
     const modal=document.getElementById("applyModal"), title=document.getElementById("applyTitle"), packet=document.getElementById("applyPacket"), src=document.getElementById("applySource"), status=document.getElementById("applyStatus");
@@ -566,13 +567,17 @@ async function extractResumeText(file){
 }
 async function setAuthUI(user){
   window.studentHireUser=user||null;
+  const beta=Boolean(window.studentHireBetaMode&&user);
   const out=document.getElementById("signedOutAccount"), inn=document.getElementById("signedInAccount");
   if(out)out.style.display=user?"none":"block";
   if(inn)inn.style.display=user?"block":"none";
   document.querySelectorAll("[data-account-only='true']").forEach(el=>{el.style.display=user?"block":"none"});
   if(user){
-    const e=document.getElementById("accountEmail");if(e)e.textContent=user.email||"Signed in";
-    const cloud=user.user_metadata?.student_hire_profile;
+    const e=document.getElementById("accountEmail");if(e)e.textContent=beta?(user.email||"Beta tester")+" — beta access":(user.email||"Signed in");
+    const badge=document.getElementById("accountBadge");if(badge)badge.textContent=beta?"● Beta access":"● Account active";
+    const copy=document.getElementById("accountCopy");if(copy)copy.textContent=beta?"This device can use live jobs, matching, Career Copilot and the local tracker. Cloud sync and automated application submission are disabled until email authentication is restored.":"Your Student Hire profile is connected to this account.";
+    const saveMsg=document.getElementById("cloudSaveMsg");if(saveMsg&&beta)saveMsg.textContent="Beta access is stored only in this browser.";
+    const cloud=beta?null:user.user_metadata?.student_hire_profile;
     if(cloud&&Object.keys(cloud).length){
       const current=localProfile();
       localStorage.setItem("studentHireProfile",JSON.stringify({...cloud,resumeName:current.resumeName||cloud.resumeName,resumeText:current.resumeText||""}));
@@ -610,6 +615,17 @@ window.togglePasswords=function(){
 window.submitAuth=async function(){
   if(authMode==="signin")return window.signInAccount();
   return window.createAccount();
+};
+function betaUser(email){
+  return {id:"student-hire-local-beta",email:email||"Beta tester",user_metadata:{}};
+}
+window.continueBetaMode=async function(){
+  const email=document.getElementById("authEmail")?.value.trim()||"";
+  window.studentHireBetaMode=true;
+  localStorage.setItem("studentHireBetaAccess",JSON.stringify({email,startedAt:new Date().toISOString()}));
+  await setAuthUI(betaUser(email));
+  await window.renderStudentDashboard?.();
+  document.getElementById("dashboard")?.scrollIntoView({behavior:"smooth"});
 };
 window.createAccount=async()=>{
   const p=localProfile();
@@ -652,6 +668,8 @@ window.createAccount=async()=>{
     const {data,error}=await Promise.race([signupPromise,timeoutPromise]);
     if(error)throw error;
 
+    window.studentHireBetaMode=false;
+    localStorage.removeItem("studentHireBetaAccess");
     if(data?.session){
       showAuthMessage("Account created. Opening your dashboard…","success");
       await setAuthUI(data.user);
@@ -669,7 +687,9 @@ window.createAccount=async()=>{
     }
   }catch(e){
     const msg=String(e?.message||"Could not create the account. Try again.");
-    showAuthMessage(msg,"error");
+    if(/email logins are disabled|email_provider_disabled/i.test(msg)){
+      showAuthMessage("Email accounts are temporarily unavailable on the cloud auth service. Use “Continue in beta mode” to keep testing on this device; cloud sync and automated application submission will remain off until email auth is restored.","error");
+    }else showAuthMessage(msg,"error");
   }finally{
     if(btn){btn.disabled=false;btn.textContent="Create account"}
   }
@@ -681,14 +701,31 @@ window.signInAccount=async()=>{
   try{
     const {data,error}=await supabase.auth.signInWithPassword({email,password});
     if(error)throw error;
+    window.studentHireBetaMode=false;
+    localStorage.removeItem("studentHireBetaAccess");
     showAuthMessage("Signed in. Live jobs are unlocked.","success");
     await setAuthUI(data.user);
     const p=localProfile();if(window.persistProfileToAccount&&profileReady(p))await window.persistProfileToAccount(p);
     document.getElementById("dashboard")?.scrollIntoView({behavior:"smooth"});
-  }catch(e){showAuthMessage(e?.message||"Could not sign in. Check your email and password.","error")}
+  }catch(e){
+    const msg=String(e?.message||"Could not sign in. Check your email and password.");
+    if(/email logins are disabled|email_provider_disabled/i.test(msg)){
+      showAuthMessage("Email sign-in is temporarily unavailable on the cloud auth service. Use “Continue in beta mode” to keep testing on this device; cloud sync and automated application submission will remain off until email auth is restored.","error");
+    }else showAuthMessage(msg,"error");
+  }
   finally{if(btn){btn.disabled=false;btn.textContent=authMode==="signin"?"Sign in":"Create account"}}
 };
-window.signOutAccount=async()=>{await supabase.auth.signOut();window.studentHireUser=null;location.hash="account";location.reload()};
+window.signOutAccount=async()=>{
+  if(window.studentHireBetaMode){
+    localStorage.removeItem("studentHireBetaAccess");
+    window.studentHireBetaMode=false;
+    window.studentHireUser=null;
+    location.hash="account";
+    location.reload();
+    return;
+  }
+  await supabase.auth.signOut();window.studentHireUser=null;location.hash="account";location.reload()
+};
 
 window.liveSearchJobs=[];
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
@@ -729,6 +766,7 @@ window.searchLiveJobs=async function(){
 window.openLiveApplyAgent=function(index){
   const j=window.liveSearchJobs?.[index];if(!j)return;
   if(!window.studentHireUser){document.getElementById("account")?.scrollIntoView({behavior:"smooth"});return}
+  if(window.studentHireBetaMode){const msg=document.getElementById("jobSearchMsg");if(msg)msg.textContent="Beta access can search and track jobs, but automated application submission requires a real cloud account once email authentication is restored.";return}
   if(!profileReady(localProfile())){document.getElementById("profile")?.scrollIntoView({behavior:"smooth"});return}
   window.dispatchEvent(new CustomEvent("studenthire-open-live-apply",{detail:j}));
 };
@@ -775,7 +813,7 @@ window.renderStudentDashboard=async function(){
   setText("dashboardWelcome",p.name?"Welcome, "+p.name.split(" ")[0]:"Your career dashboard");
   const sub=document.getElementById("dashboardSub");
   if(sub)sub.textContent=user
-    ?"Your resume, improvement plan and live job matches in one place."
+    ?(window.studentHireBetaMode?"Beta access: your resume, improvement plan and live job matches work on this device. Cloud sync and automated submission are temporarily unavailable.":"Your resume, improvement plan and live job matches in one place.")
     :"Your dashboard is ready. Confirm your email to activate cloud sync and the application agent.";
   setText("dashResumeName",p.resumeName,"Resume not available");
   setText("dashResumeStatus",p.resumeText?"Resume text is available for coaching.":"Resume facts are saved; re-upload for line-level coaching.","");
@@ -830,7 +868,21 @@ window.refreshDashboardMatches=async function(){
 };
 
 setAuthMode("create");
-const {data:{session}}=await supabase.auth.getSession();await setAuthUI(session?.user||null);
-supabase.auth.onAuthStateChange((_event,session)=>setAuthUI(session?.user||null));
+const {data:{session}}=await supabase.auth.getSession();
+if(session?.user){
+  window.studentHireBetaMode=false;
+  localStorage.removeItem("studentHireBetaAccess");
+  await setAuthUI(session.user);
+}else{
+  let beta=null;try{beta=JSON.parse(localStorage.getItem("studentHireBetaAccess")||"null")}catch{}
+  if(beta){
+    window.studentHireBetaMode=true;
+    await setAuthUI(betaUser(beta.email||""));
+  }else await setAuthUI(null);
+}
+supabase.auth.onAuthStateChange((_event,session)=>{
+  if(session?.user){window.studentHireBetaMode=false;localStorage.removeItem("studentHireBetaAccess")}
+  setAuthUI(session?.user||(window.studentHireBetaMode?betaUser((()=>{try{return JSON.parse(localStorage.getItem("studentHireBetaAccess")||"null")?.email||""}catch{return ""}})()):null));
+});
 </script>
 </body></html>
