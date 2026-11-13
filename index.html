@@ -507,9 +507,6 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 </script>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs";
-import * as mammoth from "https://cdn.jsdelivr.net/npm/mammoth@1.9.0/+esm";
-pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
 const supabase=createClient("https://c--f2684d00-06a0-47e6-a2f2-d3623ae08849-prod.lovable.cloud","sb_publishable_R4K_XQE20WIevzostvW6Tw_s7OiRdPZ",{auth:{persistSession:true,autoRefreshToken:true}});
 window.studentHireSupabase=supabase;
 window.extractResumeFactsFromFile=async function(file){
@@ -549,12 +546,20 @@ async function extractResumeText(file){
   const name=file.name.toLowerCase();
   if(name.endsWith(".txt"))return await file.text();
   if(name.endsWith(".pdf")){
+    const pdfjsLib=await import("https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs");
+    pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs";
     const buf=await file.arrayBuffer(), pdf=await pdfjsLib.getDocument({data:buf}).promise;let out=[];
-    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const content=await page.getTextContent();out.push(content.items.map(x=>x.str||"").join(" "))}
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);
+      const content=await page.getTextContent();
+      out.push(content.items.map(x=>x.str||"").join(" "));
+    }
     return out.join("\n");
   }
   if(name.endsWith(".docx")){
-    const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});return result.value||"";
+    const mammoth=await import("https://cdn.jsdelivr.net/npm/mammoth@1.9.0/+esm");
+    const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});
+    return result.value||"";
   }
   if(name.endsWith(".doc"))throw new Error("Legacy .doc files are not parsed automatically yet. Upload PDF, DOCX, or TXT for autofill.");
   return "";
