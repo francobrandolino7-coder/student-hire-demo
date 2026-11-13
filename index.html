@@ -148,7 +148,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 <section class="section" id="dashboard" data-account-only="true" style="display:none"><div class="wrap">
 <div class="eyebrow">Your Student Hire dashboard</div>
 <h2 class="dashWelcome" id="dashboardWelcome">Your career dashboard</h2>
-<p class="sub">Your resume, improvement plan and live job matches in one place.</p>
+<p class="sub" id="dashboardSub">Your resume, improvement plan and live job matches in one place.</p>
 
 <div class="dashboardHero">
   <div class="card">
@@ -418,7 +418,7 @@ body{background:linear-gradient(180deg,#ffffff 0,#f7f9fc 100%);color:var(--text)
 
   let pendingAgentJob=null;
   window.openApplyAgent=function(id){
-    if(!window.studentHireUser){document.getElementById("account")?.scrollIntoView({behavior:"smooth"});return}
+    if(!window.studentHireUser){const status=document.getElementById("dashboardMatchStatus");if(status)status.textContent="Confirm your email and sign in before using the application agent.";document.getElementById("account")?.scrollIntoView({behavior:"smooth"});return}
     if(!isProfileComplete()){document.getElementById("profile")?.scrollIntoView({behavior:"smooth"});return}
     const j=jobs.find(x=>x.id===id); if(!j)return; pendingAgentJob=j;
     const modal=document.getElementById("applyModal"), title=document.getElementById("applyTitle"), packet=document.getElementById("applyPacket"), src=document.getElementById("applySource"), status=document.getElementById("applyStatus");
@@ -624,8 +624,12 @@ window.createAccount=async()=>{
       await setAuthUI(data.user);
       document.getElementById("dashboard")?.scrollIntoView({behavior:"smooth"});
     }else{
-      showAuthMessage("Account created. Confirm your email to finish setup.","success");
+      showAuthMessage("Account created. Your dashboard is ready now. Confirm your email to activate cloud sync and application-agent features.","success");
+      window.studentHirePendingAccount={email};
       const n=document.getElementById("confirmNotice");if(n)n.style.display="block";
+      const dash=document.getElementById("dashboard");if(dash)dash.style.display="block";
+      await window.renderStudentDashboard?.();
+      document.getElementById("dashboard")?.scrollIntoView({behavior:"smooth"});
     }
   }catch(e){showAuthMessage(e?.message||"Could not create the account. Try again.","error")}
   finally{if(btn){btn.disabled=false;btn.textContent="Create account"}}
@@ -664,7 +668,7 @@ window.searchLiveJobs=async function(){
   const q=document.getElementById("jobQuery")?.value.trim(), location=document.getElementById("jobLocation")?.value.trim();
   const msg=document.getElementById("jobSearchMsg"), box=document.getElementById("liveResults");
   if(!q){if(msg)msg.textContent="Enter a job title or keyword first.";return}
-  if(!window.studentHireUser){if(msg)msg.textContent="Sign in to search current jobs.";return}
+  if(!window.studentHireUser && !window.studentHirePendingAccount){if(msg)msg.textContent="Create or sign in to your account to search current jobs.";return}
   if(msg)msg.textContent="Searching current Job Bank listings…";if(box)box.innerHTML="";
   try{
     const u=new URL("https://student-hire-agent.onrender.com/api/jobs");u.searchParams.set("q",q);if(location)u.searchParams.set("location",location);
@@ -727,8 +731,12 @@ function resumeCoachSuggestions(p){
 }
 window.renderStudentDashboard=async function(){
   const p=localProfile(), user=window.studentHireUser;
-  if(!user)return;
+  if(!user && !window.studentHirePendingAccount)return;
   setText("dashboardWelcome",p.name?"Welcome, "+p.name.split(" ")[0]:"Your career dashboard");
+  const sub=document.getElementById("dashboardSub");
+  if(sub)sub.textContent=user
+    ?"Your resume, improvement plan and live job matches in one place."
+    :"Your dashboard is ready. Confirm your email to activate cloud sync and the application agent.";
   setText("dashResumeName",p.resumeName,"Resume not available");
   setText("dashResumeStatus",p.resumeText?"Resume text is available for coaching.":"Resume facts are saved; re-upload for line-level coaching.","");
   const preview=document.getElementById("dashResumePreview");
@@ -766,7 +774,7 @@ window.copyImprovedResume=async function(){
 };
 window.refreshDashboardMatches=async function(){
   const p=localProfile(), box=document.getElementById("dashboardMatches"), status=document.getElementById("dashboardMatchStatus"), reason=document.getElementById("dashboardMatchReason");
-  if(!window.studentHireUser||!box)return;
+  if((!window.studentHireUser && !window.studentHirePendingAccount)||!box)return;
   const q=inferJobKeyword(p), location=p.location||"Toronto, ON";
   if(reason)reason.textContent='Searching current "'+q+'" roles near '+location+' based on your profile and goals.';
   if(status)status.textContent="Finding current jobs…";box.innerHTML="";
